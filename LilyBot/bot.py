@@ -98,7 +98,7 @@ def main():
     app.add_handler(MessageHandler(filters.ALL  & ~filters.COMMAND, antispam.check_flood))
     app.add_handler(CallbackQueryHandler(warnings.warn_callback, pattern="^warn_"))
 
-    logger.info("🌹 LilyBot is running...")
+    logger.info("🌸 LilyBot is running...")
     app.run_polling(allowed_updates=["message", "chat_member", "callback_query"])
 
 

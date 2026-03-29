@@ -51,6 +51,35 @@ def _init_tables(conn: sqlite3.Connection):
             chat_id INTEGER PRIMARY KEY,
             limit_  INTEGER DEFAULT 0
         );
+
+        CREATE TABLE IF NOT EXISTS notes (
+            chat_id  INTEGER,
+            name     TEXT,
+            content  TEXT,
+            PRIMARY KEY (chat_id, name)
+        );
+
+        CREATE TABLE IF NOT EXISTS rules (
+            chat_id INTEGER PRIMARY KEY,
+            content TEXT DEFAULT ''
+        );
+
+        CREATE TABLE IF NOT EXISTS locks (
+            chat_id INTEGER PRIMARY KEY,
+            text    INTEGER DEFAULT 0,
+            media   INTEGER DEFAULT 0,
+            polls   INTEGER DEFAULT 0,
+            invite  INTEGER DEFAULT 0,
+            pin     INTEGER DEFAULT 0,
+            info    INTEGER DEFAULT 0
+        );
+
+        CREATE TABLE IF NOT EXISTS gbans (
+            user_id   INTEGER PRIMARY KEY,
+            reason    TEXT,
+            banned_by INTEGER,
+            date      TEXT
+        );
     """)
     conn.commit()
 

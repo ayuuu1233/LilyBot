@@ -1,8 +1,8 @@
 # config.py  –  Edit these before running the bot
 
 # ── Required ────────────────────────────────────────────────────────────────
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"       # Get from @BotFather
-OWNER_ID   = 123456789                  # Your Telegram user ID (int)
+BOT_TOKEN = "8776955205:AAHwOe_2ByT9fIvyRtaoxlrs3Mktg7LPZho"     # Get from @BotFather
+OWNER_ID   = 5158013355                  # Your Telegram user ID (int)
 
 # ── Optional ────────────────────────────────────────────────────────────────
 # Users with these IDs are treated as sudo/dev admins globally

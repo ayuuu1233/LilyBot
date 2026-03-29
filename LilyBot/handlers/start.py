@@ -105,12 +105,12 @@ def _keyboard(is_owner: bool = False) -> InlineKeyboardMarkup:
         [
             InlineKeyboardButton("📖 Commands~",   callback_data="start_help"),
             # ⬇ Replace with your actual bot username
-            InlineKeyboardButton("➕ Add to Group", url="https://t.me/YourBotUsername?startgroup=true"),
+            InlineKeyboardButton("➕ Add to Group", url="https://t.me/@liiiilyy_bot?startgroup=true"),
         ],
         [
             InlineKeyboardButton("🌸 GitHub",  url="https://github.com/"),
             # ⬇ Replace with your support group link
-            InlineKeyboardButton("💬 Support", url="https://t.me/"),
+            InlineKeyboardButton("💬 Support", url="https://t.me/@upper_moon_chat"),
         ],
     ]
     if is_owner:

@@ -71,8 +71,8 @@ Types: text, media, polls, invite, pin, info
 
 #content = re.sub(r'HELP_TEXT = """.*?"""', new_help, content, flags=re.DOTALL)
 
-with open("/home/claude/rosebot/handlers/admin.py", "w") as f:
-    f.write(content)
+#with open("/home/claude/rosebot/handlers/admin.py", "w") as f:
+    #f.write(content)
 
 
 async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):

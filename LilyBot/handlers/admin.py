@@ -49,7 +49,29 @@ HELP_TEXT = """
 /id – Get chat/user ID
 /info – Get user info
 /help – Show this message
+
+<b>📝 Notes</b>
+/save [name] [text] – Save a note
+/get [name] – Get a note (or type #name)
+/notes – List all notes
+/clear [name] – Delete a note
+
+<b>📜 Rules</b>
+/setrules [text] – Set group rules
+/rules – Show group rules
+/resetrules – Clear rules
+
+<b>🔒 Locks</b>
+/lock [type] – Lock message type
+/unlock [type] – Unlock message type
+/locklist – Show lock status
+Types: text, media, polls, invite, pin, info
 """
+
+content = re.sub(r'HELP_TEXT = """.*?"""', new_help, content, flags=re.DOTALL)
+
+with open("/home/claude/rosebot/handlers/admin.py", "w") as f:
+    f.write(content)
 
 
 async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):

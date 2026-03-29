@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from telegram import Update, ChatPermissions
+import re
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 
@@ -68,7 +69,7 @@ HELP_TEXT = """
 Types: text, media, polls, invite, pin, info
 """
 
-content = re.sub(r'HELP_TEXT = """.*?"""', new_help, content, flags=re.DOTALL)
+#content = re.sub(r'HELP_TEXT = """.*?"""', new_help, content, flags=re.DOTALL)
 
 with open("/home/claude/rosebot/handlers/admin.py", "w") as f:
     f.write(content)

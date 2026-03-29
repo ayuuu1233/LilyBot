@@ -15,4 +15,4 @@ DEFAULT_WARN_LIMIT = 3
 DEFAULT_FLOOD_LIMIT = 5
 
 # SQLite database path (auto-created on first run)
-DATABASE = "rosebot.db"
+DATABASE = "lilybot.db"

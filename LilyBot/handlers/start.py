@@ -1,7 +1,7 @@
-        # handlers/start.py
-# ✦ Kawaii autistic start command with GIF + inline buttons ✦
+                # handlers/start.py
+# ✦ Kawaii start — Video pehle, caption + buttons neeche ✦
 # ─────────────────────────────────────────────────────────────
-# Bot.py mein ye lines add karo:
+# bot.py mein add karo:
 #
 #   from handlers import start as start_handler
 #
@@ -23,27 +23,27 @@ logger = logging.getLogger(__name__)
 
 
 # ══════════════════════════════════════════════════════════════
-#  🎲  KAWAII ASSETS
+#  🎬  VIDEO / ANIMATION
+#  Yahan apna video URL ya Telegram file_id daal do
+#  
+#  URL format:   "https://example.com/your-video.mp4"
+#  file_id format: "BAACAgIAAxkBAAI..."  (from @RawDataBot)
+#
+#  Multiple daal sakte ho — random ek chalega har baar
 # ══════════════════════════════════════════════════════════════
 
-# ✅ Ye actual Telegram-hosted GIF file_ids hain — 100% kaam karenge
-# Agar koi specific GIF chahiye toh:
-#   1. Apne bot ko woh GIF bhejo
-#   2. Bot se /id reply karo — file_id milega
-#   3. Neeche replace kar do
-KAWAII_GIFS = [
-    "CgACAgIAAxkBAAIBB2YkAAGVH2QgSwABl2o5XXP5AAFvqQACLxMAAuKhIEtB0trxcBqPDTQE",  # anime wave
-    "CgACAgIAAxkBAAIBCGYkAAGWH9iFAAFl0VdZkc3dAAF7qQACMBMAAuKhIEsxnmUfaP5YxzQE",  # kawaii girl
-    "CgACAgIAAxkBAAIBCWYkAAGXzQABMsZ2AAFkMQABemqpAAIxEwAC4qEgS2t0AAF5wAABpzQE",  # anime happy
-    "CgACAgQAAxkBAAIBCmYkAAGYzQABMsZ2AAFkMAABemqpAAIyEwAC4qEgS9Eq6WOeAAF4KDQE",  # cute nod
+START_VIDEOS = [
+    "https://your-video-url-here.mp4",   # ← APNA VIDEO URL YAHAN DAALO
+    # "https://another-video.mp4",       # ← Aur videos add kar sakte ho
 ]
 
-# Fallback imgur GIF URLs (slower but works if file_ids fail)
-KAWAII_GIF_URLS = [
-    "https://i.imgur.com/5TJA9IG.gif",
-    "https://i.imgur.com/VhQkSZ6.gif",
-    "https://i.imgur.com/rWXyEJH.gif",
-]
+# Agar video nahi chalti toh fallback animation URL (optional)
+FALLBACK_ANIMATION = None  # e.g. "https://your-fallback.gif"
+
+
+# ══════════════════════════════════════════════════════════════
+#  💬  KAWAII WORDS  (random greeting)
+# ══════════════════════════════════════════════════════════════
 
 KAWAII_WORDS = [
     "nyaa~",
@@ -56,9 +56,10 @@ KAWAII_WORDS = [
 
 
 # ══════════════════════════════════════════════════════════════
-#  📝  MESSAGE TEMPLATES
+#  📝  CAPTIONS
 # ══════════════════════════════════════════════════════════════
 
+# Normal user — private chat
 START_PRIVATE = """\
 ╔══════════════════════════╗
   🌸 ʜᴇʟʟᴏ, {name}~ {kw} 🌸
@@ -69,16 +70,17 @@ START_PRIVATE = """\
 
 <b>ᴡʜᴀᴛ ɪ ᴄᴀɴ ᴅᴏ~</b>
 ┌─────────────────────────┐
-│ 🔨 ʙᴀɴ ᴇᴠɪʟ ᴘᴘʟ          │
+│ 🔨  ʙᴀɴ ᴇᴠɪʟ ᴘᴘʟ         │
 │ ⚠️  ᴡᴀʀɴ ʙᴀᴅ ʙᴏʏs         │
-│ 👋 ᴡᴇʟᴄᴏᴍᴇ ɴᴇᴡ ꜰʀɪᴇɴᴅs   │
-│ 📝 sᴀᴠᴇ ɴᴏᴛᴇs & ʀᴜʟᴇs    │
-│ 🔒 ʟᴏᴄᴋ ᴛʜɪɴɢs ᴜᴡᴜ        │
-│ 🌊 sᴛᴏᴘ ꜰʟᴏᴏᴅᴇʀs~         │
+│ 👋  ᴡᴇʟᴄᴏᴍᴇ ɴᴇᴡ ꜰʀɪᴇɴᴅs  │
+│ 📝  sᴀᴠᴇ ɴᴏᴛᴇs & ʀᴜʟᴇs   │
+│ 🔒  ʟᴏᴄᴋ ᴛʜɪɴɢs ᴜᴡᴜ       │
+│ 🌊  sᴛᴏᴘ ꜰʟᴏᴏᴅᴇʀs~        │
 └─────────────────────────┘
 
 <i>ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ & ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ✧˖°</i>"""
 
+# Owner only — extra aura 💀
 START_OWNER = """\
 ╔══════════════════════════╗
   👑 ᴍʏ ʟᴏʀᴅ ʜᴀs ᴀʀʀɪᴠᴇᴅ 👑
@@ -93,9 +95,9 @@ START_OWNER = """\
 <code>/gban /ungban /gbanlist /stats</code>
 <code>/restart /shutdown</code>
 
-💀 <i>ɴᴏ ᴏɴᴇ ᴇʟsᴇ ᴄᴀɴ sᴇᴇ ᴛʜɪs~
-ɪᴛ's ᴏᴜʀ sᴇᴄʀᴇᴛ ᴏᴋ? 🤫</i>"""
+💀 <i>ɪᴛ's ᴏᴜʀ sᴇᴄʀᴇᴛ ᴏᴋ? 🤫</i>"""
 
+# Group chat — short sassy
 START_GROUP = """\
 <i>*teleports behind u*</i>
 ɴᴏᴛʜɪɴɢ ᴘᴇʀsᴏɴɴᴇʟ ᴋɪᴅ~ (ง •̀_•́)ง
@@ -127,7 +129,7 @@ def _keyboard(is_owner: bool = False) -> InlineKeyboardMarkup:
 
 
 # ══════════════════════════════════════════════════════════════
-#  🚀  /start HANDLER
+#  🚀  /start  HANDLER
 # ══════════════════════════════════════════════════════════════
 
 async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -135,71 +137,56 @@ async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     chat     = update.effective_chat
     is_owner = user.id == OWNER_ID or user.id in SUDO_USERS
 
-    # Group mein — short sassy reply
+    # ── Group chat — short reply ──────────────────────────────
     if chat.type != "private":
         await update.message.reply_html(START_GROUP)
         return
 
-    # Private chat — full kawaii experience
+    # ── Private chat — video + caption below ─────────────────
     caption = START_OWNER if is_owner else START_PRIVATE.format(
         name=user.first_name,
         kw=random.choice(KAWAII_WORDS),
     )
-    kb = _keyboard(is_owner)
+    kb      = _keyboard(is_owner)
+    video   = random.choice(START_VIDEOS)
 
-    # ── Step 1: Try Telegram file_ids (fastest) ──────────────
+    # Try sending as video with caption embedded below
     sent = False
-    shuffled_ids = KAWAII_GIFS.copy()
-    random.shuffle(shuffled_ids)
+    try:
+        await ctx.bot.send_video(
+            chat_id      = chat.id,
+            video        = video,
+            caption      = caption,
+            parse_mode   = ParseMode.HTML,
+            reply_markup = kb,
+            # supports_streaming=True makes it play instantly without full download
+            supports_streaming = True,
+        )
+        sent = True
+    except Exception as e:
+        logger.warning(f"send_video failed: {e}")
 
-    for file_id in shuffled_ids:
+    # Fallback: try as animation (works for .gif / .mp4)
+    if not sent and FALLBACK_ANIMATION:
         try:
             await ctx.bot.send_animation(
                 chat_id      = chat.id,
-                animation    = file_id,
+                animation    = FALLBACK_ANIMATION,
                 caption      = caption,
                 parse_mode   = ParseMode.HTML,
                 reply_markup = kb,
             )
             sent = True
-            break
         except Exception as e:
-            logger.warning(f"file_id failed: {e}")
-            continue
+            logger.warning(f"send_animation fallback failed: {e}")
 
-    # ── Step 2: Fallback — imgur GIF URLs ────────────────────
+    # Final fallback: plain text only (always works)
     if not sent:
-        shuffled_urls = KAWAII_GIF_URLS.copy()
-        random.shuffle(shuffled_urls)
-        for url in shuffled_urls:
-            try:
-                await ctx.bot.send_animation(
-                    chat_id      = chat.id,
-                    animation    = url,
-                    caption      = caption,
-                    parse_mode   = ParseMode.HTML,
-                    reply_markup = kb,
-                )
-                sent = True
-                break
-            except Exception as e:
-                logger.warning(f"URL gif failed: {e}")
-                continue
-
-    # ── Step 3: Final fallback — sticker + plain text ────────
-    if not sent:
-        try:
-            await ctx.bot.send_sticker(
-                chat_id = chat.id,
-                sticker = "CAACAgIAAxkBAAEBKKFl6_QAASmm9FHAAWSf0rV4AAFn7CkAAkYBAAIw1CEFo7A-aZvW7ZQUBA"
-            )
-        except Exception:
-            pass
         await update.message.reply_html(caption, reply_markup=kb)
 
 
 # ══════════════════════════════════════════════════════════════
-#  🔘  CALLBACK HANDLER
+#  🔘  CALLBACK HANDLER  (button taps)
 # ══════════════════════════════════════════════════════════════
 
 async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -209,14 +196,19 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     async def _edit(text: str, kb: InlineKeyboardMarkup):
+        """Edit caption on video message, else edit text."""
         try:
             await query.edit_message_caption(
-                caption=text, parse_mode=ParseMode.HTML, reply_markup=kb
+                caption      = text,
+                parse_mode   = ParseMode.HTML,
+                reply_markup = kb,
             )
         except Exception:
             try:
                 await query.edit_message_text(
-                    text=text, parse_mode=ParseMode.HTML, reply_markup=kb
+                    text         = text,
+                    parse_mode   = ParseMode.HTML,
+                    reply_markup = kb,
                 )
             except Exception as e:
                 logger.warning(f"edit failed: {e}")
@@ -245,18 +237,23 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 
 # ══════════════════════════════════════════════════════════════
-#  💡  APNA GIF FILE_ID KAISE NIKALE
+#  💡  VIDEO URL KAISE ADD KARE
 # ══════════════════════════════════════════════════════════════
 #
-#  Method 1 — Sabse aasaan:
-#    1. @RawDataBot pe koi bhi GIF bhejo
-#    2. Woh file_id reply mein dega
-#    3. Usse KAWAII_GIFS list mein daal do
+#  Option A — Direct URL (easiest):
+#    START_VIDEOS = ["https://your-cdn.com/kawaii.mp4"]
+#    Telegram directly URL se video fetch karega
 #
-#  Method 2 — Code se:
-#    async def get_file_id(update, ctx):
-#        if update.message.animation:
-#            print(update.message.animation.file_id)
-#    # ye handler add karo bot mein temporarily
+#  Option B — Telegram file_id (fastest, no re-upload):
+#    1. Apne bot ko video bhejo in private chat
+#    2. @RawDataBot ko forward karo — file_id milega
+#    3. START_VIDEOS = ["BAACAgIAAxkBAAI..."]
+#
+#  Option C — Multiple videos (random ek play hoga):
+#    START_VIDEOS = [
+#        "https://url1.mp4",
+#        "https://url2.mp4",
+#        "BAACAgIAAxkBAAI...",   # file_id bhi mix kar sakte ho
+#    ]
 #
 # ══════════════════════════════════════════════════════════════

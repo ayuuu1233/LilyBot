@@ -1,5 +1,8 @@
 # handlers/admin.py  –  Ban, Kick, Mute, Pin, Promote, Info …
 
+import asyncio
+import logging
+import random
 from datetime import timedelta
 from telegram import Update, ChatPermissions
 import re

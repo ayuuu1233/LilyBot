@@ -35,7 +35,8 @@ logger = logging.getLogger(__name__)
 START_VIDEOS = [
     "https://files.catbox.moe/931ph0.mp4",   # ← APNA VIDEO URL YAHAN DAALO
     "https://files.catbox.moe/dlg0rb.mp4", 
-    "https://files.catbox.moe/ie9zcx.mp4"
+    "https://files.catbox.moe/ie9zcx.mp4", 
+    "https://files.catbox.moe/qkeqgs.mp4"
   # "https://another-video.mp4",       # ← Aur videos add kar sakte ho
 ]
 

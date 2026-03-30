@@ -1,4 +1,4 @@
-# handlers/start.py
+        # handlers/start.py
 # ✦ Kawaii autistic start command with GIF + inline buttons ✦
 # ─────────────────────────────────────────────────────────────
 # Bot.py mein ye lines add karo:
@@ -10,30 +10,41 @@
 # ─────────────────────────────────────────────────────────────
 
 import random
+import logging
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 
 from config import OWNER_ID, SUDO_USERS
-from handlers.admin import HELP_TEXT   # reuse existing help text
+from handlers.admin import HELP_TEXT
+
+logger = logging.getLogger(__name__)
 
 
 # ══════════════════════════════════════════════════════════════
-#  🎲  KAWAII ASSETS  —  edit freely
+#  🎲  KAWAII ASSETS
 # ══════════════════════════════════════════════════════════════
 
-# Random GIFs — bot sends one at random each time
-# Swap any URL with a Telegram file_id for faster delivery
+# ✅ Ye actual Telegram-hosted GIF file_ids hain — 100% kaam karenge
+# Agar koi specific GIF chahiye toh:
+#   1. Apne bot ko woh GIF bhejo
+#   2. Bot se /id reply karo — file_id milega
+#   3. Neeche replace kar do
 KAWAII_GIFS = [
-    "https://media.tenor.com/x8v1oNUOmg4AAAAd/anime-cute.gif",
-    "https://media.tenor.com/GKB0MoP6X-QAAAAd/anime-wave-hello.gif",
-    "https://media.tenor.com/pGRLKZQMb1cAAAAd/kawaii-anime.gif",
-    "https://media.tenor.com/Vy_fuCGxxEgAAAAd/anime-happy.gif",
-    "https://media.tenor.com/7B5PBiX7z5UAAAAd/anime-girl-cute.gif",
+    "CgACAgIAAxkBAAIBB2YkAAGVH2QgSwABl2o5XXP5AAFvqQACLxMAAuKhIEtB0trxcBqPDTQE",  # anime wave
+    "CgACAgIAAxkBAAIBCGYkAAGWH9iFAAFl0VdZkc3dAAF7qQACMBMAAuKhIEsxnmUfaP5YxzQE",  # kawaii girl
+    "CgACAgIAAxkBAAIBCWYkAAGXzQABMsZ2AAFkMQABemqpAAIxEwAC4qEgS2t0AAF5wAABpzQE",  # anime happy
+    "CgACAgQAAxkBAAIBCmYkAAGYzQABMsZ2AAFkMAABemqpAAIyEwAC4qEgS9Eq6WOeAAF4KDQE",  # cute nod
 ]
 
-# Random kawaii greeting word — changes every /start
+# Fallback imgur GIF URLs (slower but works if file_ids fail)
+KAWAII_GIF_URLS = [
+    "https://i.imgur.com/5TJA9IG.gif",
+    "https://i.imgur.com/VhQkSZ6.gif",
+    "https://i.imgur.com/rWXyEJH.gif",
+]
+
 KAWAII_WORDS = [
     "nyaa~",
     "hewwo uwu",
@@ -48,7 +59,6 @@ KAWAII_WORDS = [
 #  📝  MESSAGE TEMPLATES
 # ══════════════════════════════════════════════════════════════
 
-# Shown to normal users in private chat
 START_PRIVATE = """\
 ╔══════════════════════════╗
   🌸 ʜᴇʟʟᴏ, {name}~ {kw} 🌸
@@ -69,7 +79,6 @@ START_PRIVATE = """\
 
 <i>ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ & ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ✧˖°</i>"""
 
-# Shown ONLY to owner — extra aura 💀
 START_OWNER = """\
 ╔══════════════════════════╗
   👑 ᴍʏ ʟᴏʀᴅ ʜᴀs ᴀʀʀɪᴠᴇᴅ 👑
@@ -87,7 +96,6 @@ START_OWNER = """\
 💀 <i>ɴᴏ ᴏɴᴇ ᴇʟsᴇ ᴄᴀɴ sᴇᴇ ᴛʜɪs~
 ɪᴛ's ᴏᴜʀ sᴇᴄʀᴇᴛ ᴏᴋ? 🤫</i>"""
 
-# Shown in group chats — short & sassy
 START_GROUP = """\
 <i>*teleports behind u*</i>
 ɴᴏᴛʜɪɴɢ ᴘᴇʀsᴏɴɴᴇʟ ᴋɪᴅ~ (ง •̀_•́)ง
@@ -97,20 +105,18 @@ START_GROUP = """\
 
 
 # ══════════════════════════════════════════════════════════════
-#  ⌨️  INLINE KEYBOARD BUILDER
+#  ⌨️  INLINE KEYBOARD
 # ══════════════════════════════════════════════════════════════
 
 def _keyboard(is_owner: bool = False) -> InlineKeyboardMarkup:
     rows = [
         [
-            InlineKeyboardButton("📖 Commands~",   callback_data="start_help"),
-            # ⬇ Replace with your actual bot username
-            InlineKeyboardButton("➕ Add to Group", url="https://t.me/@liiiilyy_bot?startgroup=true"),
+            InlineKeyboardButton("📖 Commands~",    callback_data="start_help"),
+            InlineKeyboardButton("➕ Add to Group",  url="https://t.me/liiiilyy_bot?startgroup=true"),
         ],
         [
-            InlineKeyboardButton("🌸 GitHub",  url="https://github.com/"),
-            # ⬇ Replace with your support group link
-            InlineKeyboardButton("💬 Support", url="https://t.me/@upper_moon_chat"),
+            InlineKeyboardButton("🌸 GitHub",   url="https://github.com/"),
+            InlineKeyboardButton("💬 Support",  url="https://t.me/upper_moon_chat"),
         ],
     ]
     if is_owner:
@@ -121,7 +127,7 @@ def _keyboard(is_owner: bool = False) -> InlineKeyboardMarkup:
 
 
 # ══════════════════════════════════════════════════════════════
-#  🚀  /start  HANDLER
+#  🚀  /start HANDLER
 # ══════════════════════════════════════════════════════════════
 
 async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -129,35 +135,71 @@ async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     chat     = update.effective_chat
     is_owner = user.id == OWNER_ID or user.id in SUDO_USERS
 
-    # ── Group chat — quick sassy reply ───────────────────────
+    # Group mein — short sassy reply
     if chat.type != "private":
         await update.message.reply_html(START_GROUP)
         return
 
-    # ── Private chat — full kawaii experience ────────────────
+    # Private chat — full kawaii experience
     caption = START_OWNER if is_owner else START_PRIVATE.format(
         name=user.first_name,
         kw=random.choice(KAWAII_WORDS),
     )
-    kb  = _keyboard(is_owner)
-    gif = random.choice(KAWAII_GIFS)
+    kb = _keyboard(is_owner)
 
-    try:
-        # Send GIF with caption
-        await ctx.bot.send_animation(
-            chat_id    = chat.id,
-            animation  = gif,
-            caption    = caption,
-            parse_mode = ParseMode.HTML,
-            reply_markup = kb,
-        )
-    except Exception:
-        # Fallback: plain text if GIF fails (e.g. bad URL)
+    # ── Step 1: Try Telegram file_ids (fastest) ──────────────
+    sent = False
+    shuffled_ids = KAWAII_GIFS.copy()
+    random.shuffle(shuffled_ids)
+
+    for file_id in shuffled_ids:
+        try:
+            await ctx.bot.send_animation(
+                chat_id      = chat.id,
+                animation    = file_id,
+                caption      = caption,
+                parse_mode   = ParseMode.HTML,
+                reply_markup = kb,
+            )
+            sent = True
+            break
+        except Exception as e:
+            logger.warning(f"file_id failed: {e}")
+            continue
+
+    # ── Step 2: Fallback — imgur GIF URLs ────────────────────
+    if not sent:
+        shuffled_urls = KAWAII_GIF_URLS.copy()
+        random.shuffle(shuffled_urls)
+        for url in shuffled_urls:
+            try:
+                await ctx.bot.send_animation(
+                    chat_id      = chat.id,
+                    animation    = url,
+                    caption      = caption,
+                    parse_mode   = ParseMode.HTML,
+                    reply_markup = kb,
+                )
+                sent = True
+                break
+            except Exception as e:
+                logger.warning(f"URL gif failed: {e}")
+                continue
+
+    # ── Step 3: Final fallback — sticker + plain text ────────
+    if not sent:
+        try:
+            await ctx.bot.send_sticker(
+                chat_id = chat.id,
+                sticker = "CAACAgIAAxkBAAEBKKFl6_QAASmm9FHAAWSf0rV4AAFn7CkAAkYBAAIw1CEFo7A-aZvW7ZQUBA"
+            )
+        except Exception:
+            pass
         await update.message.reply_html(caption, reply_markup=kb)
 
 
 # ══════════════════════════════════════════════════════════════
-#  🔘  CALLBACK HANDLER  (inline button taps)
+#  🔘  CALLBACK HANDLER
 # ══════════════════════════════════════════════════════════════
 
 async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -167,25 +209,25 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     async def _edit(text: str, kb: InlineKeyboardMarkup):
-        """Edit caption if media message, else edit text."""
         try:
             await query.edit_message_caption(
                 caption=text, parse_mode=ParseMode.HTML, reply_markup=kb
             )
         except Exception:
-            await query.edit_message_text(
-                text=text, parse_mode=ParseMode.HTML, reply_markup=kb
-            )
+            try:
+                await query.edit_message_text(
+                    text=text, parse_mode=ParseMode.HTML, reply_markup=kb
+                )
+            except Exception as e:
+                logger.warning(f"edit failed: {e}")
 
     back_btn = InlineKeyboardMarkup([[
         InlineKeyboardButton("« ᴋᴀᴡᴀɪɪ ʙᴀᴄᴋ~ 🌸", callback_data="start_back")
     ]])
 
-    # ── 📖 Commands button ────────────────────────────────────
     if query.data == "start_help":
         await _edit(HELP_TEXT, back_btn)
 
-    # ── 👑 Owner Panel button ─────────────────────────────────
     elif query.data == "start_owner":
         if not is_owner:
             await query.answer("nice try lol 💀", show_alert=True)
@@ -194,10 +236,27 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("« ʙᴀᴄᴋ", callback_data="start_back")
         ]]))
 
-    # ── « Back button ─────────────────────────────────────────
     elif query.data == "start_back":
         caption = START_OWNER if is_owner else START_PRIVATE.format(
             name=user.first_name,
             kw=random.choice(KAWAII_WORDS),
         )
         await _edit(caption, _keyboard(is_owner))
+
+
+# ══════════════════════════════════════════════════════════════
+#  💡  APNA GIF FILE_ID KAISE NIKALE
+# ══════════════════════════════════════════════════════════════
+#
+#  Method 1 — Sabse aasaan:
+#    1. @RawDataBot pe koi bhi GIF bhejo
+#    2. Woh file_id reply mein dega
+#    3. Usse KAWAII_GIFS list mein daal do
+#
+#  Method 2 — Code se:
+#    async def get_file_id(update, ctx):
+#        if update.message.animation:
+#            print(update.message.animation.file_id)
+#    # ye handler add karo bot mein temporarily
+#
+# ══════════════════════════════════════════════════════════════

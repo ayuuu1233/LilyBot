@@ -33,8 +33,10 @@ logger = logging.getLogger(__name__)
 # ══════════════════════════════════════════════════════════════
 
 START_VIDEOS = [
-    "https://your-video-url-here.mp4",   # ← APNA VIDEO URL YAHAN DAALO
-    # "https://another-video.mp4",       # ← Aur videos add kar sakte ho
+    "https://files.catbox.moe/931ph0.mp4",   # ← APNA VIDEO URL YAHAN DAALO
+    "https://files.catbox.moe/dlg0rb.mp4", 
+    "https://files.catbox.moe/ie9zcx.mp4"
+  # "https://another-video.mp4",       # ← Aur videos add kar sakte ho
 ]
 
 # Agar video nahi chalti toh fallback animation URL (optional)

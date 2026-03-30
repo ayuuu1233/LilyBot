@@ -3,8 +3,13 @@
 import asyncio
 import logging
 import random
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 from datetime import timedelta
-from telegram import Update, ChatPermissions
+from telegram import ChatPermissions
 import re
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode

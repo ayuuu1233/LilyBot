@@ -112,7 +112,7 @@ def _keyboard(is_owner: bool = False) -> InlineKeyboardMarkup:
     rows = [
         [
             InlineKeyboardButton("📖 Commands~",    callback_data="start_help"),
-            InlineKeyboardButton("➕ Add to Group",  url="https://t.me/liiiilyy_bot?startgroup=true"),
+            InlineKeyboardButton("➕ Add to Group",  url="https://t.me/@liiiilyy_bot?startgroup=true"),
         ],
         [
             InlineKeyboardButton("🌸 GitHub",   url="https://github.com/"),

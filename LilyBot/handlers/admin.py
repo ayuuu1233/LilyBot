@@ -75,19 +75,19 @@ Types: text, media, polls, invite, pin, info
     #f.write(content)
 
 
-async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == "private":
-        await reply(update, (
-            "🌹 <b>Hello! I'm LilyBot</b>\n\n"
-            "Add me to a group and make me admin to get started.\n"
-            "Use /help to see all commands."
-        ))
-    else:
-        await reply(update, "🌹 I'm alive! Use /help to see commands.")
+#async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    #if update.effective_chat.type == "private":
+        #await reply(update, (
+            #"🌹 <b>Hello! I'm LilyBot</b>\n\n"
+            #"Add me to a group and make me admin to get started.\n"
+            #"Use /help to see all commands."
+        #))
+    #else:
+        #await reply(update, "🌹 I'm alive! Use /help to see commands.")
 
 
-async def help_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    await reply(update, HELP_TEXT)
+#async def help_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    #await reply(update, HELP_TEXT)
 
 
 # ── Ban ───────────────────────────────────────────────────────────────────────

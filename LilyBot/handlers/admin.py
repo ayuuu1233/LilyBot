@@ -15,7 +15,11 @@ from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 
 from helpers import admin_only, bot_admin_required, reply, resolve_target
-from config import SUDO_USERS
+from config import OWNER_ID, SUDO_USERS
+from handlers.admin import HELP_TEXT
+
+logger = logging.getLogger(__name__)
+
 
 HELP_TEXT = """
 🌹 <b>LilyBot Commands</b>

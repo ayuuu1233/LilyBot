@@ -1,12 +1,8 @@
 # config.py  –  Edit these before running the bot
 
 # ── Required ────────────────────────────────────────────────────────────────
-BOT_TOKEN = "8776955205:AAHmdBC2Wfca0lBighOVpJsVXbxanFjpWI0"     # Get from @BotFather
+BOT_TOKEN = "8776955205:AAGtcMkmC6ew-UGMJRqusvUZEa8a_5kO5jI"     # Get from @BotFather
 OWNER_ID   = 5158013355                  # Your Telegram user ID (int)
-BOT_NAME = "LilyBot"
-BOT_USERNAME  = "liiiilyy_bot"           # @ ke bina
-SUPPORT_GROUP = "@upper_moon_chat"
-UPDATES_LINK  = "https://t.me/upper_moon_chat"
 
 # ── Optional ────────────────────────────────────────────────────────────────
 # Users with these IDs are treated as sudo/dev admins globally

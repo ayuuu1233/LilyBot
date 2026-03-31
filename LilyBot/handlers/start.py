@@ -19,12 +19,12 @@ logger = logging.getLogger(__name__)
 
 # ✦━━━━━━━━ CONFIG ━━━━━━━━✦
 
-BOT_NAME = "KawaiiGuardian"
-BOT_USERNAME = "your_bot_username"
-SUPPORT_GROUP = "your_support_group"
+BOT_NAME = "『 ʟɪʟʏ вσт 』"
+BOT_USERNAME = "@liiiilyy_bot"
+SUPPORT_GROUP = "@upper_moon_chat"
 
-VIDEO_PRIVATE = "https://files.catbox.moe/nfu6s9.mp4"
-VIDEO_GROUP = "https://telegra.ph/file/0b2e8e33d07a0d0e5914f.mp4"
+VIDEO_PRIVATE = "https://files.catbox.moe/931ph0.mp4"
+VIDEO_GROUP = "https://files.catbox.moe/dlg0rb.mp4"
 
 STICKER_ID = "CAACAgUAAxkBAAEBeVpm-jtB-lkO8Oixy5SZHTAy1Ymp4QACEgwAAv75EFbYc5vQ3hQ1Ph4E"
 

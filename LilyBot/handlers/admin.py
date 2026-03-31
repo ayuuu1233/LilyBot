@@ -101,309 +101,298 @@ Types: text, media, polls, invite, pin, info
 #async def help_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     #await reply(update, HELP_TEXT)
 
-# ══════════════════════════════════════════════════════════════
-#  ⚙️  CONFIG  —  Yahan apni values daal do
-# ══════════════════════════════════════════════════════════════
-
-SUPPORT_GROUP    = "@upper_moon_chat"           # support group username
-BOT_USERNAME     = "liiiilyy_bot"               # apna bot username (@ ke bina)
-UPDATES_CHANNEL  = "https://t.me/upper_moon_chat"  # updates channel link
-
-# Private chat video (catbox / direct mp4 link ya Telegram file_id)
-VIDEO_URL        = "https://files.catbox.moe/931ph0.mp4"  # ← APNA VIDEO DAALO
-
-# Group chat video
-VIDEO_URL_GROUP  = "https://files.catbox.moe/dlg0rb.mp4"  # ← GROUP VIDEO
-
-# Image shown when user hasn't joined support group
-GATE_IMAGE_URL   = "https://files.catbox.moe/sn06ft.jpg"   # ← APNI IMAGE DAALO
+  # ╔══════════════════════════════════════════════════╗
+# ║           handlers/start.py                     ║
+# ║   LilyBot — /start  (exact video style)         ║
+# ╚══════════════════════════════════════════════════╝
+#
+# bot.py mein add karo:
+#
+#   from handlers import start as start_handler
+#   app.add_handler(CommandHandler("start", start_handler.start))
+#   app.add_handler(CallbackQueryHandler(
+#       start_handler.start_callback, pattern="^st_"
+#   ))
 
 
-# ══════════════════════════════════════════════════════════════
-#  💬  CAPTIONS
-# ══════════════════════════════════════════════════════════════
 
-# Private chat — normal user
-def caption_private(first_name: str, user_id: int) -> str:
-    kw = random.choice([
-        "nyaa~", "hewwo uwu", "h-hai!! (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)",
-        "eep! you found me!! ✧", "o-ohayou~ ✦",
-    ])
+
+# ╔══════════════════════════════════════════════════╗
+# ║  ⚙️  CONFIG — Bas yahi 6 cheezein badalni hain   ║
+# ╚══════════════════════════════════════════════════╝
+
+BOT_NAME       = "LilyBot"
+BOT_USERNAME   = "liiiilyy_bot"           # @ ke bina
+SUPPORT_GROUP  = "@upper_moon_chat"
+UPDATES_LINK   = "https://t.me/upper_moon_chat"
+
+# Sticker file_id — @RawDataBot ko koi sticker bhejo, file_id milega
+# Abhi ek default kawaii sticker hai, apna daal sakte ho
+STICKER_ID     = "CAACAgUAAxkBAAEBeVpm-jtB-lkO8Oixy5SZHTAy1Ymp4QACEgwAAv75EFbYc5vQ3hQ1Ph4E"
+
+# Video URLs — private chat aur group chat ke liye alag
+VIDEO_PRIVATE  = "https://files.catbox.moe/nfu6s9.mp4"   # ← apna video daalo
+VIDEO_GROUP    = "https://telegra.ph/file/0b2e8e33d07a0d0e5914f.mp4"
+
+# Gate image (support group join nahi kiya toh yeh dikhega)
+GATE_IMAGE     = "https://files.catbox.moe/sn06ft.jpg"
+
+
+# ╔══════════════════════════════════════════════════╗
+# ║  📝  CAPTIONS                                   ║
+# ╚══════════════════════════════════════════════════╝
+
+_GREETS = [
+    "ɴʏᴀᴀ~", "ʜᴇᴡᴡᴏ ᴜᴡᴜ", "ᴏʜᴀʏᴏᴜ~ ✦",
+    "ʜ-ʜᴀɪ!! ✨", "ʏᴀʜʜᴏ~ (ﾉ◕ヮ◕)ﾉ", "ᴋᴏɴɴɪᴄʜɪᴡᴀ~ 🌙",
+]
+
+
+def _caption_private(name: str, uid: int) -> str:
+    greet = random.choice(_GREETS)
     return (
         f"┬── ⋅ ⋅ ───── ᯽ ───── ⋅ ⋅ ──┬\n"
-        f"  Kση'ηɪᴄʜɪᴡᴧ <a href='tg://user?id={user_id}'>{first_name}</a>! {kw}\n"
+        f"  {greet} <a href='tg://user?id={uid}'>{name}</a>!\n"
         f"┴── ⋅ ⋅ ───── ᯽ ───── ⋅ ⋅ ──┴\n\n"
-        f"────────────────────────────\n"
-        f"│  🌸 ᴡєʟᴄσϻє ᴛσ <b>LilyBot</b>  │\n"
-        f"│  ʏσυꝛ ᴋᴀᴡᴀɪɪ ɢʀᴏᴜᴘ ɢᴜᴀʀᴅɪᴀɴ ☄ │\n"
-        f"────────────────────────────\n\n"
-        f"━━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━\n"
-        f" 🔨 ʙᴀɴ · ᴋɪᴄᴋ · ᴍᴜᴛᴇ ᴇᴠɪʟ ᴘᴘʟ\n"
-        f" ⚠️  ᴡᴀʀɴ ᴀɴᴅ ᴛʀᴀᴄᴋ ʙᴀᴅ ʙᴏʏs\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"  🌸 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ <b>{BOT_NAME}</b>\n"
+        f"  ʏᴏᴜʀ ᴋᴀᴡᴀɪɪ ɢʀᴏᴜᴘ ɢᴜᴀʀᴅɪᴀɴ ☄\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━\n"
+        f" 🔨 ʙᴀɴ · ᴋɪᴄᴋ · ᴍᴜᴛᴇ ᴜsᴇʀs\n"
+        f" ⚠️  ᴡᴀʀɴ & ᴛʀᴀᴄᴋ ʙᴀᴅ ʙᴏʏs\n"
         f" 👋 ᴄᴜsᴛᴏᴍ ᴡᴇʟᴄᴏᴍᴇ ᴍᴇssᴀɢᴇs\n"
         f" 📝 ɴᴏᴛᴇs · ʀᴜʟᴇs · ꜰɪʟᴛᴇʀs\n"
         f" 🔒 ʟᴏᴄᴋ ᴀɴʏ ᴍᴇssᴀɢᴇ ᴛʏᴘᴇ\n"
         f" 🌊 ᴀɴᴛɪ-ꜰʟᴏᴏᴅ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ\n"
-        f"━━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━\n\n"
-        f"──────────────────────────\n"
+        f"━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━\n\n"
+        f"──────────────────────\n"
         f" sɪᴍᴘʟʏ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ\n"
         f" ᴀɴᴅ ᴍᴀᴋᴇ ᴍᴇ ᴀᴅᴍɪɴ ✧˖°\n"
-        f"──────────────────────────"
+        f"──────────────────────"
     )
 
 
-# Private chat — owner
-def caption_owner(first_name: str, user_id: int) -> str:
+def _caption_owner(name: str, uid: int) -> str:
     return (
-        f"╔══════════════════════════╗\n"
-        f"  👑 ᴍʏ ʟᴏʀᴅ ʜᴀs ᴀʀʀɪᴠᴇᴅ 👑\n"
-        f"╚══════════════════════════╝\n\n"
+        f"┬── ⋅ ⋅ ───── ᯽ ───── ⋅ ⋅ ──┬\n"
+        f"  👑 ᴍʏ ʟᴏʀᴅ <a href='tg://user?id={uid}'>{name}</a>!\n"
+        f"┴── ⋅ ⋅ ───── ᯽ ───── ⋅ ⋅ ──┴\n\n"
         f"<i>*ʙᴏᴡs ᴅᴏᴡɴ ᴘʀᴏꜰᴏᴜɴᴅʟʏ*</i> (｡•̀ᴗ-)✧\n\n"
-        f"ᴏᴍɢ ɪᴛ's <a href='tg://user?id={user_id}'><b>ᴛʜᴇ ᴏᴡɴᴇʀ</b></a>!!\n"
         f"ᴇᴠᴇʀʏᴛʜɪɴɢ ɪs ʀᴇᴀᴅʏ ꜰᴏʀ ʏᴏᴜ, sᴀᴍᴀ~ 🌸\n\n"
-        f"<b>ʏᴏᴜʀ sᴇᴄʀᴇᴛ ᴄᴍᴅs:</b>\n"
-        f"<code>/iam /broadcast /announce</code>\n"
-        f"<code>/gban /ungban /gbanlist /stats</code>\n"
-        f"<code>/restart /shutdown</code>\n\n"
-        f"💀 <i>ɪᴛ's ᴏᴜʀ sᴇᴄʀᴇᴛ ᴏᴋ? 🤫</i>"
+        f"<b>👑 ᴏᴡɴᴇʀ ᴄᴍᴅs:</b>\n"
+        f"<code>/iam</code> · <code>/broadcast</code> · <code>/announce</code>\n"
+        f"<code>/gban</code> · <code>/ungban</code> · <code>/stats</code>\n"
+        f"<code>/restart</code> · <code>/shutdown</code>\n\n"
+        f"💀 <i>ssshhh~ ɪᴛ's ᴏᴜʀ sᴇᴄʀᴇᴛ 🤫</i>"
     )
 
 
-# DM sent to user showing their own profile info
-def caption_dm(first_name: str, username: str, user_id: int) -> str:
-    uname = f"@{username}" if username else "N/A"
+def _caption_group(name: str, uid: int) -> str:
     return (
-        f"ㅤ<b>ʜᴀs sᴛᴀʀᴛᴇᴅ LilyBot.</b>\n\n"
-        f"• <b>ɴᴀᴍᴇ :</b> {first_name}\n"
-        f"• <b>ᴜsᴇʀɴᴀᴍᴇ :</b> {uname}\n"
-        f"• <b>ɪᴅ :</b> <code>{user_id}</code>\n\n"
-        f"<i>ᴛʜᴀɴᴋs ꜰᴏʀ sᴛᴀʀᴛɪɴɢ ᴍᴇ~ 🌸</i>"
+        f"<i>*ᴛᴇʟᴇᴘᴏʀᴛs ʙᴇʜɪɴᴅ ᴜ*</i> ɴᴏᴛʜɪɴɢ ᴘᴇʀsᴏɴɴᴇʟ ᴋɪᴅ~\n\n"
+        f"👋 ʜᴇʏ <a href='tg://user?id={uid}'>{name}</a>!\n\n"
+        f"🌸 <b>{BOT_NAME}</b> ɪs ᴏɴʟɪɴᴇ & ʀᴇᴀᴅʏ ᴛᴏ ɢᴜᴀʀᴅ ✦\n"
+        f"ᴜsᴇ /help ꜰᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs~ (◕‿◕✿)"
     )
 
 
-# Group chat caption
-def caption_group(first_name: str, user_id: int) -> str:
-    return (
-        f"<i>*teleports behind u*</i>\n"
-        f"ɴᴏᴛʜɪɴɢ ᴘᴇʀsᴏɴɴᴇʟ ᴋɪᴅ~ (ง •̀_•́)ง\n\n"
-        f"👋 ʜɪ <a href='tg://user?id={user_id}'>{first_name}</a>!\n\n"
-        f"🌸 <b>LilyBot</b> ɪs ᴏɴʟɪɴᴇ ᴀɴᴅ ʀᴇᴀᴅʏ ᴛᴏ ɢᴜᴀʀᴅ!! ✦\n"
-        f"ᴜsᴇ /help ᴛᴏ sᴇᴇ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs~ (◕‿◕✿)"
-    )
+# ╔══════════════════════════════════════════════════╗
+# ║  ⌨️  KEYBOARDS                                  ║
+# ╚══════════════════════════════════════════════════╝
 
-
-# ══════════════════════════════════════════════════════════════
-#  ⌨️  KEYBOARDS
-# ══════════════════════════════════════════════════════════════
-
-def keyboard_private(is_owner: bool = False) -> InlineKeyboardMarkup:
+def _kb_private(is_owner: bool = False) -> InlineKeyboardMarkup:
     rows = [
         [InlineKeyboardButton(
-            "✜ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ✜",
+            f"✜ ᴀᴅᴅ {BOT_NAME} ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ ✜",
             url=f"https://t.me/{BOT_USERNAME}?startgroup=new"
         )],
         [
             InlineKeyboardButton("˹ sᴜᴘᴘᴏʀᴛ ˼",  url=f"https://t.me/{SUPPORT_GROUP.lstrip('@')}"),
-            InlineKeyboardButton("˹ ᴜᴘᴅᴀᴛᴇs ˼", url=UPDATES_CHANNEL),
+            InlineKeyboardButton("˹ ᴜᴘᴅᴀᴛᴇs ˼", url=UPDATES_LINK),
         ],
-        [InlineKeyboardButton("✧ ʜᴇʟᴘ ✧", callback_data="help_main")],
+        [InlineKeyboardButton("✧ ʜᴇʟᴘ ✧", callback_data="st_help")],
     ]
     if is_owner:
-        rows.append([InlineKeyboardButton("👑 Owner Panel~", callback_data="start_owner")])
+        rows.append([InlineKeyboardButton("👑 ᴏᴡɴᴇʀ ᴘᴀɴᴇʟ ✦", callback_data="st_owner")])
     return InlineKeyboardMarkup(rows)
 
 
-def keyboard_group() -> InlineKeyboardMarkup:
+def _kb_group() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup([
         [InlineKeyboardButton(
             "Ⰶ ᴘᴍ ᴍᴇ Ⰶ",
-            url=f"https://t.me/{BOT_USERNAME}?start=true"
+            url=f"https://t.me/{BOT_USERNAME}?start=hi"
         )],
         [
-            InlineKeyboardButton("ꔷ sᴜᴘᴘᴏʀᴛ ꔷ",  url=f"https://t.me/{SUPPORT_GROUP.lstrip('@')}"),
-            InlineKeyboardButton("ꔷ ᴜᴘᴅᴀᴛᴇs ꔷ", url=UPDATES_CHANNEL),
+            InlineKeyboardButton("ꔷ sᴜᴘᴘᴏʀᴛ ꔷ", url=f"https://t.me/{SUPPORT_GROUP.lstrip('@')}"),
+            InlineKeyboardButton("ꔷ ᴜᴘᴅᴀᴛᴇs ꔷ", url=UPDATES_LINK),
         ],
     ])
 
 
-HELP_KEYBOARD = InlineKeyboardMarkup([
-    [InlineKeyboardButton("👮 ᴀᴅᴍɪɴ ᴄᴍᴅs",   callback_data="help_admin")],
-    [InlineKeyboardButton("📝 ɴᴏᴛᴇs & ʀᴜʟᴇs", callback_data="help_notes")],
-    [InlineKeyboardButton("🔒 ʟᴏᴄᴋs & ꜰʟᴏᴏᴅ", callback_data="help_locks")],
-    [InlineKeyboardButton("⤾ ʙᴀᴄᴋ",           callback_data="help_back")],
+# Help menu
+_KB_HELP_MAIN = InlineKeyboardMarkup([
+    [
+        InlineKeyboardButton("👮 ᴀᴅᴍɪɴ",   callback_data="st_h_admin"),
+        InlineKeyboardButton("📝 ɴᴏᴛᴇs",   callback_data="st_h_notes"),
+    ],
+    [
+        InlineKeyboardButton("🔒 ʟᴏᴄᴋs",   callback_data="st_h_locks"),
+        InlineKeyboardButton("👋 ᴡᴇʟᴄᴏᴍᴇ", callback_data="st_h_welcome"),
+    ],
+    [InlineKeyboardButton("⤾ ʙᴀᴄᴋ", callback_data="st_back")],
 ])
 
-HELP_ADMIN_TEXT = """\
-<b>👮 ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs</b>
+_KB_BACK_HELP = InlineKeyboardMarkup([[
+    InlineKeyboardButton("⤾ ʙᴀᴄᴋ", callback_data="st_help")
+]])
 
-◈ /ban – ʙᴀɴ ᴀ ᴜsᴇʀ
-◈ /unban – ᴜɴʙᴀɴ ᴀ ᴜsᴇʀ
-◈ /kick – ᴋɪᴄᴋ ᴀ ᴜsᴇʀ
-◈ /mute [ᴛɪᴍᴇ] – ᴍᴜᴛᴇ ᴀ ᴜsᴇʀ
-◈ /unmute – ᴜɴᴍᴜᴛᴇ ᴀ ᴜsᴇʀ
-◈ /warn [ʀᴇᴀsᴏɴ] – ᴡᴀʀɴ ᴀ ᴜsᴇʀ
-◈ /warns – ᴄʜᴇᴄᴋ ᴡᴀʀɴɪɴɢs
-◈ /promote – ᴘʀᴏᴍᴏᴛᴇ ᴛᴏ ᴀᴅᴍɪɴ
-◈ /demote – ᴅᴇᴍᴏᴛᴇ ꜰʀᴏᴍ ᴀᴅᴍɪɴ
-◈ /pin – ᴘɪɴ ᴀ ᴍᴇssᴀɢᴇ
-◈ /adminlist – ʟɪsᴛ ᴀʟʟ ᴀᴅᴍɪɴs"""
+_HELP_TEXTS = {
+    "st_h_admin": (
+        "<b>👮 ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs</b>\n\n"
+        "◈ /ban – ʙᴀɴ ᴜsᴇʀ\n"
+        "◈ /unban – ᴜɴʙᴀɴ\n"
+        "◈ /kick – ᴋɪᴄᴋ ᴜsᴇʀ\n"
+        "◈ /mute [ᴛɪᴍᴇ] – ᴍᴜᴛᴇ\n"
+        "◈ /unmute – ᴜɴᴍᴜᴛᴇ\n"
+        "◈ /warn [ʀᴇᴀsᴏɴ] – ᴡᴀʀɴ\n"
+        "◈ /warns – ᴄʜᴇᴄᴋ ᴡᴀʀɴs\n"
+        "◈ /warnlimit [ɴ] – sᴇᴛ ʟɪᴍɪᴛ\n"
+        "◈ /resetwarns – ʀᴇsᴇᴛ\n"
+        "◈ /promote – ᴍᴀᴋᴇ ᴀᴅᴍɪɴ\n"
+        "◈ /demote – ʀᴇᴍᴏᴠᴇ ᴀᴅᴍɪɴ\n"
+        "◈ /pin – ᴘɪɴ ᴍsɢ\n"
+        "◈ /unpin – ᴜɴᴘɪɴ\n"
+        "◈ /adminlist – ʟɪsᴛ ᴀᴅᴍɪɴs"
+    ),
+    "st_h_notes": (
+        "<b>📝 ɴᴏᴛᴇs, ʀᴜʟᴇs & ꜰɪʟᴛᴇʀs</b>\n\n"
+        "◈ /save [ɴ] [ᴛxᴛ] – sᴀᴠᴇ ɴᴏᴛᴇ\n"
+        "◈ /get [ɴ] – ɢᴇᴛ ɴᴏᴛᴇ\n"
+        "◈ /notes – ʟɪsᴛ ɴᴏᴛᴇs\n"
+        "◈ /clear [ɴ] – ᴅᴇʟᴇᴛᴇ\n"
+        "◈ #ɴᴀᴍᴇ – ǫᴜɪᴄᴋ ɢᴇᴛ\n\n"
+        "◈ /setrules – sᴇᴛ ʀᴜʟᴇs\n"
+        "◈ /rules – sʜᴏᴡ ʀᴜʟᴇs\n"
+        "◈ /resetrules – ᴄʟᴇᴀʀ\n\n"
+        "◈ /filter [ᴋ] [ʀ] – ᴀᴅᴅ\n"
+        "◈ /stop [ᴋ] – ʀᴇᴍᴏᴠᴇ\n"
+        "◈ /filters – ʟɪsᴛ ᴀʟʟ"
+    ),
+    "st_h_locks": (
+        "<b>🔒 ʟᴏᴄᴋs & ꜰʟᴏᴏᴅ</b>\n\n"
+        "◈ /lock [ᴛʏᴘᴇ] – ʟᴏᴄᴋ\n"
+        "◈ /unlock [ᴛʏᴘᴇ] – ᴜɴʟᴏᴄᴋ\n"
+        "◈ /locklist – sᴛᴀᴛᴜs\n\n"
+        "  ᴛʏᴘᴇs:\n"
+        "  text · media · polls\n"
+        "  invite · pin · info\n\n"
+        "◈ /antiflood [ɴ|ᴏꜰꜰ] – sᴇᴛ\n"
+        "◈ /flood – ᴄʜᴇᴄᴋ sᴇᴛᴛɪɴɢs"
+    ),
+    "st_h_welcome": (
+        "<b>👋 ᴡᴇʟᴄᴏᴍᴇ & ɢᴏᴏᴅʙʏᴇ</b>\n\n"
+        "◈ /setwelcome [ᴛxᴛ] – sᴇᴛ\n"
+        "◈ /welcome on|off – ᴛᴏɢɢʟᴇ\n"
+        "◈ /setgoodbye [ᴛxᴛ] – sᴇᴛ\n"
+        "◈ /goodbye on|off – ᴛᴏɢɢʟᴇ\n"
+        "◈ /resetwelcome – ʀᴇsᴇᴛ\n\n"
+        "<b>ᴠᴀʀɪᴀʙʟᴇs:</b>\n"
+        "<code>{first}</code> <code>{last}</code>\n"
+        "<code>{mention}</code> <code>{count}</code>\n"
+        "<code>{chat}</code> <code>{id}</code>"
+    ),
+}
 
-HELP_NOTES_TEXT = """\
-<b>📝 ɴᴏᴛᴇs & ʀᴜʟᴇs</b>
 
-◈ /save [ɴᴀᴍᴇ] [ᴛᴇxᴛ] – sᴀᴠᴇ ᴀ ɴᴏᴛᴇ
-◈ /get [ɴᴀᴍᴇ] – ɢᴇᴛ ᴀ ɴᴏᴛᴇ
-◈ /notes – ʟɪsᴛ ᴀʟʟ ɴᴏᴛᴇs
-◈ /clear [ɴᴀᴍᴇ] – ᴅᴇʟᴇᴛᴇ ᴀ ɴᴏᴛᴇ
-◈ #ɴᴀᴍᴇ – ǫᴜɪᴄᴋ ɢᴇᴛ ɴᴏᴛᴇ
-
-◈ /setrules [ᴛᴇxᴛ] – sᴇᴛ ɢʀᴏᴜᴘ ʀᴜʟᴇs
-◈ /rules – sʜᴏᴡ ʀᴜʟᴇs
-◈ /resetrules – ᴄʟᴇᴀʀ ʀᴜʟᴇs
-
-◈ /filter [ᴋᴇʏ] [ʀᴇᴘʟʏ] – ᴀᴅᴅ ꜰɪʟᴛᴇʀ
-◈ /stop [ᴋᴇʏ] – ʀᴇᴍᴏᴠᴇ ꜰɪʟᴛᴇʀ
-◈ /filters – ʟɪsᴛ ꜰɪʟᴛᴇʀs"""
-
-HELP_LOCKS_TEXT = """\
-<b>🔒 ʟᴏᴄᴋs & ꜰʟᴏᴏᴅ</b>
-
-◈ /lock [ᴛʏᴘᴇ] – ʟᴏᴄᴋ ᴍᴇssᴀɢᴇ ᴛʏᴘᴇ
-◈ /unlock [ᴛʏᴘᴇ] – ᴜɴʟᴏᴄᴋ
-◈ /locklist – sʜᴏᴡ ʟᴏᴄᴋ sᴛᴀᴛᴜs
-  ᴛʏᴘᴇs: text · media · polls · invite · pin · info
-
-◈ /antiflood [ɴ|ᴏꜰꜰ] – sᴇᴛ ꜰʟᴏᴏᴅ ʟɪᴍɪᴛ
-◈ /flood – ᴄʜᴇᴄᴋ ꜰʟᴏᴏᴅ sᴇᴛᴛɪɴɢs
-
-◈ /setwelcome [ᴛᴇxᴛ] – sᴇᴛ ᴡᴇʟᴄᴏᴍᴇ
-◈ /welcome on|off – ᴛᴏɢɢʟᴇ ᴡᴇʟᴄᴏᴍᴇ
-◈ /setgoodbye [ᴛᴇxᴛ] – sᴇᴛ ɢᴏᴏᴅʙʏᴇ"""
-
-
-# ══════════════════════════════════════════════════════════════
-#  🚀  /start  HANDLER
-# ══════════════════════════════════════════════════════════════
+# ╔══════════════════════════════════════════════════╗
+# ║  🚀  /start HANDLER                             ║
+# ╚══════════════════════════════════════════════════╝
 
 async def start(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
-    user      = update.effective_user
-    chat      = update.effective_chat
-    user_id   = user.id
-    first_name = user.first_name
-    username  = user.username
-    is_owner  = user_id == OWNER_ID or user_id in SUDO_USERS
+    user     = update.effective_user
+    chat     = update.effective_chat
+    uid      = user.id
+    name     = user.first_name
+    is_owner = uid == OWNER_ID or uid in SUDO_USERS
 
-    # ── GROUP CHAT ────────────────────────────────────────────
+    # ── GROUP ────────────────────────────────────────────────
     if chat.type != "private":
         try:
             await ctx.bot.send_video(
-                chat_id      = chat.id,
-                video        = VIDEO_URL_GROUP,
-                caption      = caption_group(first_name, user_id),
-                parse_mode   = ParseMode.HTML,
-                reply_markup = keyboard_group(),
+                chat_id            = chat.id,
+                video              = VIDEO_GROUP,
+                caption            = _caption_group(name, uid),
+                parse_mode         = ParseMode.HTML,
+                reply_markup       = _kb_group(),
                 supports_streaming = True,
             )
-        except Exception as e:
-            logger.warning(f"Group video failed: {e}")
+        except Exception:
             await update.message.reply_html(
-                caption_group(first_name, user_id),
-                reply_markup=keyboard_group()
+                _caption_group(name, uid),
+                reply_markup=_kb_group()
             )
         return
 
-    # ── PRIVATE CHAT ──────────────────────────────────────────
+    # ── PRIVATE ──────────────────────────────────────────────
 
-    # Step 1 — Check if user joined support group
+    # 1️⃣  Support group gate
     try:
-        member = await ctx.bot.get_chat_member(SUPPORT_GROUP, user_id)
+        member = await ctx.bot.get_chat_member(SUPPORT_GROUP, uid)
         if member.status == "left":
-            join_kb = InlineKeyboardMarkup([[
-                InlineKeyboardButton(
-                    "๏ ᴊᴏɪɴ sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ๏",
-                    url=f"https://t.me/{SUPPORT_GROUP.lstrip('@')}"
-                )
-            ]])
             await update.message.reply_photo(
-                photo   = GATE_IMAGE_URL,
-                caption = (
-                    "๏ ᴏᴏᴘs! ʏᴏᴜ ʜᴀᴠᴇɴ'ᴛ ᴊᴏɪɴᴇᴅ ᴏᴜʀ sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ʏᴇᴛ~\n\n"
-                    "ᴘʟᴇᴀsᴇ ᴊᴏɪɴ ᴛᴏ ᴀᴄᴄᴇss ᴍʏ ꜰᴇᴀᴛᴜʀᴇs! 🌸"
+                photo        = GATE_IMAGE,
+                caption      = (
+                    "<b>🚧 ʜᴏʟᴅ ᴜᴘ~</b>\n\n"
+                    "ʏᴏᴜ ʜᴀᴠᴇɴ'ᴛ ᴊᴏɪɴᴇᴅ ᴏᴜʀ\n"
+                    "sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ʏᴇᴛ~ 🌸\n\n"
+                    "<i>ᴊᴏɪɴ ᴛᴏ ᴜɴʟᴏᴄᴋ ᴀʟʟ ꜰᴇᴀᴛᴜʀᴇs!</i>"
                 ),
-                reply_markup = join_kb,
                 parse_mode   = ParseMode.HTML,
+                reply_markup = InlineKeyboardMarkup([[
+                    InlineKeyboardButton(
+                        "๏ ᴊᴏɪɴ sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ ๏",
+                        url=f"https://t.me/{SUPPORT_GROUP.lstrip('@')}"
+                    )
+                ]]),
             )
             return
     except Exception as e:
-        logger.warning(f"Support group check failed (continuing anyway): {e}")
-        # Agar check fail ho toh rokna nahi — continue karo
+        logger.warning(f"Gate check skipped: {e}")
 
-    # Step 2 — Animated emoji burst (🎀 🦋 🌸)
-    for emoji in ["🎀", "🦋", "🌸"]:
-        try:
-            msg = await update.message.reply_text(emoji)
-            await asyncio.sleep(0.8)
-            await msg.delete()
-        except Exception:
-            pass
-
-    # Step 3 — "Starting..." flash
+    # 2️⃣  Sticker — exact video mein yahi tha sabse pehle
     try:
-        starting = await update.message.reply_text("Starting... 🌸")
-        await asyncio.sleep(0.8)
-        await starting.delete()
-    except Exception:
-        pass
-
-    # Step 4 — Send user's own profile pic as DM (self-info card)
-    try:
-        photos = await ctx.bot.get_user_profile_photos(user_id, limit=1)
-        photo  = photos.photos[0][0].file_id if photos.total_count > 0 else None
-
-        dm_kb = InlineKeyboardMarkup([[
-            InlineKeyboardButton(first_name, url=f"tg://user?id={user_id}")
-        ]])
-
-        if photo:
-            await ctx.bot.send_photo(
-                chat_id      = user_id,
-                photo        = photo,
-                caption      = caption_dm(first_name, username, user_id),
-                parse_mode   = ParseMode.HTML,
-                reply_markup = dm_kb,
-            )
-        else:
-            await ctx.bot.send_message(
-                chat_id      = user_id,
-                text         = caption_dm(first_name, username, user_id),
-                parse_mode   = ParseMode.HTML,
-                reply_markup = dm_kb,
-            )
+        await ctx.bot.send_sticker(
+            chat_id = chat.id,
+            sticker = STICKER_ID,
+        )
+        await asyncio.sleep(0.6)
     except Exception as e:
-        logger.warning(f"DM profile card failed: {e}")
+        logger.warning(f"Sticker failed: {e}")
 
-    # Step 5 — Main video + caption + buttons
-    cap = caption_owner(first_name, user_id) if is_owner else caption_private(first_name, user_id)
-    kb  = keyboard_private(is_owner)
+    # 3️⃣  Video + caption + buttons
+    cap = _caption_owner(name, uid) if is_owner else _caption_private(name, uid)
+    kb  = _kb_private(is_owner)
 
     try:
         await ctx.bot.send_video(
-            chat_id          = chat.id,
-            video            = VIDEO_URL,
-            caption          = cap,
-            parse_mode       = ParseMode.HTML,
-            reply_markup     = kb,
+            chat_id            = chat.id,
+            video              = VIDEO_PRIVATE,
+            caption            = cap,
+            parse_mode         = ParseMode.HTML,
+            reply_markup       = kb,
             supports_streaming = True,
         )
     except Exception as e:
-        logger.warning(f"Video send failed: {e}")
-        # Fallback: plain text
+        logger.warning(f"Video failed: {e}")
+        # Fallback — plain text
         await update.message.reply_html(cap, reply_markup=kb)
 
 
-# ══════════════════════════════════════════════════════════════
-#  🔘  CALLBACK HANDLER
-# ══════════════════════════════════════════════════════════════
+# ╔══════════════════════════════════════════════════╗
+# ║  🔘  CALLBACK HANDLER                           ║
+# ╚══════════════════════════════════════════════════╝
 
 async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
     query    = update.callback_query
@@ -412,7 +401,7 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None
     data     = query.data
     await query.answer()
 
-    async def _edit(text: str, kb: InlineKeyboardMarkup):
+    async def _edit(text: str, kb: InlineKeyboardMarkup) -> None:
         try:
             await query.edit_message_caption(
                 caption=text, parse_mode=ParseMode.HTML, reply_markup=kb
@@ -425,41 +414,48 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None
             except Exception as e:
                 logger.warning(f"edit failed: {e}")
 
-    back_to_main_kb = InlineKeyboardMarkup([[
-        InlineKeyboardButton("⤾ ʙᴀᴄᴋ", callback_data="help_back")
-    ]])
+    if data == "st_help":
+        await _edit("✧ ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ~ ✧", _KB_HELP_MAIN)
 
-    # ── Help menu ─────────────────────────────────────────────
-    if data == "help_main":
-        await _edit(
-            "✧ ᴄʜᴏᴏsᴇ ᴀ ᴄᴀᴛᴇɢᴏʀʏ~ ✧",
-            HELP_KEYBOARD
-        )
+    elif data in _HELP_TEXTS:
+        await _edit(_HELP_TEXTS[data], _KB_BACK_HELP)
 
-    elif data == "help_admin":
-        await _edit(HELP_ADMIN_TEXT, back_to_main_kb)
+    elif data == "st_back":
+        cap = _caption_owner(user.first_name, user.id) if is_owner \
+              else _caption_private(user.first_name, user.id)
+        await _edit(cap, _kb_private(is_owner))
 
-    elif data == "help_notes":
-        await _edit(HELP_NOTES_TEXT, back_to_main_kb)
-
-    elif data == "help_locks":
-        await _edit(HELP_LOCKS_TEXT, back_to_main_kb)
-
-    elif data == "help_back":
-        cap = caption_owner(user.first_name, user.id) if is_owner else caption_private(user.first_name, user.id)
-        await _edit(cap, keyboard_private(is_owner))
-
-    # ── Owner panel ───────────────────────────────────────────
-    elif data == "start_owner":
+    elif data == "st_owner":
         if not is_owner:
             await query.answer("nice try lol 💀", show_alert=True)
             return
         await _edit(
-            caption_owner(user.first_name, user.id),
+            _caption_owner(user.first_name, user.id),
             InlineKeyboardMarkup([[
-                InlineKeyboardButton("⤾ ʙᴀᴄᴋ", callback_data="help_back")
+                InlineKeyboardButton("⤾ ʙᴀᴄᴋ", callback_data="st_back")
             ]])
-    )
+        )
+
+
+# ╔══════════════════════════════════════════════════╗
+# ║  💡  APNA STICKER ID KAISE NIKALE               ║
+# ╚══════════════════════════════════════════════════╝
+#
+#  1. @RawDataBot ko koi sticker bhejo
+#  2. Woh file_id reply karega
+#  3. STICKER_ID mein paste karo
+#
+#  Ya bot mein temporarily ye handler add karo:
+#
+#  async def get_sticker(update, ctx):
+#      if update.message.sticker:
+#          await update.message.reply_text(
+#              update.message.sticker.file_id
+#          )
+#  app.add_handler(MessageHandler(filters.Sticker.ALL, get_sticker))
+#
+# ╚══════════════════════════════════════════════════╝      
+    
 
 # ── Ban ───────────────────────────────────────────────────────────────────────
 

@@ -23,7 +23,7 @@ from telegram import (
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 
-from config import OWNER_ID, SUDO_USERS
+from config import OWNER_ID, SUDO_USERS, BOT_NAME, BOT_USERNAME, SUPPORT_GROUP, UPDATES_LINK
 
 logger = logging.getLogger(__name__)
 

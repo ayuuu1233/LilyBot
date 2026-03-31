@@ -1,7 +1,7 @@
 # config.py  –  Edit these before running the bot
 
 # ── Required ────────────────────────────────────────────────────────────────
-BOT_TOKEN = "8776955205:AAGtcMkmC6ew-UGMJRqusvUZEa8a_5kO5jI"     # Get from @BotFather
+BOT_TOKEN = "8776955205:AAG_yyCWOmseYZucOozxKZnzwIvHN7vzbl8"     # Get from @BotFather
 OWNER_ID   = 5158013355                  # Your Telegram user ID (int)
 
 # ── Optional ────────────────────────────────────────────────────────────────

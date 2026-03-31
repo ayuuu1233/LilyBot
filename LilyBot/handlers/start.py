@@ -236,5 +236,6 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             reply_markup=private_buttons()
     )
 
-async def help_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    await reply(update, HELP_TEXT)
+
+async def help_command(update, ctx):
+    await update.message.reply_text(HELP_TEXT, parse_mode=ParseMode.HTML)

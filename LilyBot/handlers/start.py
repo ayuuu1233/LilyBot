@@ -17,6 +17,67 @@ from telegram.constants import ParseMode
 
 logger = logging.getLogger(__name__)
 
+HELP_TEXT = """
+🌹 <b>LilyBot Commands</b>
+
+<b>Admin Tools</b>
+/ban – Ban a user
+/unban – Unban a user
+/kick – Kick (remove) a user
+/mute [time] – Mute a user (e.g. /mute 1h)
+/unmute – Unmute a user
+/warn [reason] – Warn a user
+/unwarn – Remove last warning
+/warns – Check warnings
+/warnlimit [n] – Set warning limit
+/resetwarns – Reset a user's warnings
+/promote – Promote to admin
+/demote – Demote from admin
+/pin – Pin replied message
+/unpin – Unpin current pinned message
+/adminlist – List group admins
+
+<b>Welcome</b>
+/setwelcome [text] – Set welcome message
+  Variables: {first}, {last}, {username}, {mention}, {count}
+/welcome on|off – Toggle welcome
+/setgoodbye [text] – Set goodbye message
+/goodbye on|off – Toggle goodbye
+/resetwelcome – Reset to default
+
+<b>Filters</b>
+/filter [keyword] [reply] – Add a filter
+/stop [keyword] – Remove a filter
+/filters – List all filters
+
+<b>Anti-Flood</b>
+/antiflood [n|off] – Set flood limit (messages/5s)
+/flood – Check current flood settings
+
+<b>General</b>
+/id – Get chat/user ID
+/info – Get user info
+/help – Show this message
+
+<b>📝 Notes</b>
+/save [name] [text] – Save a note
+/get [name] – Get a note (or type #name)
+/notes – List all notes
+/clear [name] – Delete a note
+
+<b>📜 Rules</b>
+/setrules [text] – Set group rules
+/rules – Show group rules
+/resetrules – Clear rules
+
+<b>🔒 Locks</b>
+/lock [type] – Lock message type
+/unlock [type] – Unlock message type
+/locklist – Show lock status
+Types: text, media, polls, invite, pin, info
+"""
+
+
 # ✦━━━━━━━━ CONFIG ━━━━━━━━✦
 
 BOT_NAME = "『 ʟɪʟʏ вσт 』"
@@ -158,22 +219,14 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     if query.data == "help":
-        await query.edit_message_caption(
-            caption="""
-🌸 <b>Help Menu</b>
+    await query.edit_message_caption(
+        caption=HELP_TEXT,
+        parse_mode=ParseMode.HTML,
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("⬅ Back", callback_data="back")]
+        ])
+    )
 
-➤ /ban - Ban user  
-➤ /mute - Mute user  
-➤ /kick - Kick user  
-➤ /warn - Warn system  
-
-✨ More features coming soon~
-""",
-            parse_mode=ParseMode.HTML,
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("⬅ Back", callback_data="back")]
-            ])
-        )
 
     elif query.data == "back":
         await query.edit_message_caption(
@@ -181,3 +234,6 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             parse_mode=ParseMode.HTML,
             reply_markup=private_buttons()
     )
+
+async def help_cmd(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    await reply(update, HELP_TEXT)

@@ -14,6 +14,7 @@ from telegram import (
 )
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
+from handlers.admin import HELP_TEXT
 
 logger = logging.getLogger(__name__)
 

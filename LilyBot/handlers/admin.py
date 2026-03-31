@@ -128,11 +128,11 @@ UPDATES_LINK   = "https://t.me/upper_moon_chat"
 
 # Sticker file_id — @RawDataBot ko koi sticker bhejo, file_id milega
 # Abhi ek default kawaii sticker hai, apna daal sakte ho
-STICKER_ID     = "CAACAgUAAxkBAAEBeVpm-jtB-lkO8Oixy5SZHTAy1Ymp4QACEgwAAv75EFbYc5vQ3hQ1Ph4E"
+STICKER_ID     = "CAACAgIAAxkBAAFGEk9py21yQ49JGa-8KmsC2SjjhlJDIwACLXIAAp0y-Eqfu3A5hCItKToE"
 
 # Video URLs — private chat aur group chat ke liye alag
-VIDEO_PRIVATE  = "https://files.catbox.moe/nfu6s9.mp4"   # ← apna video daalo
-VIDEO_GROUP    = "https://telegra.ph/file/0b2e8e33d07a0d0e5914f.mp4"
+VIDEO_PRIVATE  = "https://files.catbox.moe/931ph0.mp4"   # ← apna video daalo
+VIDEO_GROUP    = "https://files.catbox.moe/dlg0rb.mp4"
 
 # Gate image (support group join nahi kiya toh yeh dikhega)
 GATE_IMAGE     = "https://files.catbox.moe/sn06ft.jpg"

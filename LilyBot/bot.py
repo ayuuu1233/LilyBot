@@ -89,17 +89,19 @@ def main():
 
     # ── General ─────────────────────────────────────────────────────────────
     app.add_handler(CommandHandler("start",      start_handler.start))
-    app.add_handler(CallbackQueryHandler(start_handler.start_callback, pattern="^start_"))             
-    app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(CallbackQueryHandler(start_callback, pattern="^(help|back)$"))
+    app.add_handler(CommandHandler("help",       help_command))
     app.add_handler(CommandHandler("id",         admin.get_id))
     app.add_handler(CommandHandler("info",       admin.user_info))
-    
+
+    # ── Callback Handlers ───────────────────────────────────────────────────
+    # ✦ Single unified callback — handles help, back, warn_ and start_ patterns
+    app.add_handler(CallbackQueryHandler(start_handler.start_callback, pattern="^(help|back)$"))
+    app.add_handler(CallbackQueryHandler(warnings.warn_callback,       pattern="^warn_"))
+
     # ── Message handlers ─────────────────────────────────────────────────────
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, filter_handlers.check_filters))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, notes.check_hashtag_note))
     app.add_handler(MessageHandler(filters.ALL  & ~filters.COMMAND, antispam.check_flood))
-    app.add_handler(CallbackQueryHandler(warnings.warn_callback, pattern="^warn_"))
 
     logger.info("🌸 LilyBot is running...")
     app.run_polling(allowed_updates=["message", "chat_member", "callback_query"])

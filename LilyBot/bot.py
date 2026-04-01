@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 
 from config import BOT_TOKEN
-from handlers import admin, welcome, filters as filter_handlers, warnings, antispam, notes, rules, locks, owner
+from handlers import admin, welcome, filters as filter_handlers, warnings, antispam, notes, rules, locks, owner, start as start_handler
 from handlers.start import help_command
 
 logging.basicConfig(
@@ -88,7 +88,8 @@ def main():
     app.add_handler(CommandHandler("iam",        owner.iam))
 
     # ── General ─────────────────────────────────────────────────────────────
-    app.add_handler(CommandHandler("start", start))                
+    app.add_handler(CommandHandler("start",      start_handler.start))
+    app.add_handler(CallbackQueryHandler(start_handler.start_callback, pattern="^start_"))             
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CallbackQueryHandler(start_callback, pattern="^(help|back)$"))
     app.add_handler(CommandHandler("id",         admin.get_id))

@@ -90,7 +90,8 @@ def main():
     # ── General ─────────────────────────────────────────────────────────────
     app.add_handler(CommandHandler("start",      start_handler.start))
     app.add_handler(CallbackQueryHandler(start_handler.start_callback, pattern="^start_"))
-    app.add_handler(CommandHandler("help",       help_command))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CallbackQueryHandler(start_callback, pattern="^(help|back)$"))
     app.add_handler(CommandHandler("id",         admin.get_id))
     app.add_handler(CommandHandler("info",       admin.user_info))
     

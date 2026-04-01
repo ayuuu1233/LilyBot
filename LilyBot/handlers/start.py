@@ -84,8 +84,8 @@ BOT_NAME      = "『 ʟɪʟʏ вσт 』"
 BOT_USERNAME  = "liiiilyy_bot"          # ✦ NO @ here — used inside URLs
 SUPPORT_GROUP = "upper_moon_chat"       # ✦ NO @ here — used inside URLs
 
-VIDEO_PRIVATE = "https://files.catbox.moe/931ph0.mp4"
-VIDEO_GROUP   = "https://files.catbox.moe/dlg0rb.mp4"
+VIDEO_PRIVATE = "https://files.catbox.moe/dlg0rb.mp4"
+VIDEO_GROUP   = "https://files.catbox.moe/931ph0.mp4"
 
 STICKER_ID = "CAACAgIAAxkBAAFGEk9py21yQ49JGaKmsC2SjjhlJDIwACLXIAAp0y-Eqfu3A5hCItKToE"
 

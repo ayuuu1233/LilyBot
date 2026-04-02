@@ -32,8 +32,7 @@ logger = logging.getLogger(__name__)
 OWNER_ID = 5158013355  # ← Change this!
 
 # Cooldown in seconds — user won't get a second reply within this time
-COOLDOWN_SECONDS = 20 * 60  # 20 minutes
-
+COOLDOWN_SECONDS = 2 * 60 * 60  # 2 hours
 
 # ✦━━━━━━━━ STATE ━━━━━━━━✦
 # Stored in memory — resets on bot restart

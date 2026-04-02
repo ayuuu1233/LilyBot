@@ -12,6 +12,7 @@ from telegram.ext import (
 from config import BOT_TOKEN
 from handlers import admin, welcome, filters as filter_handlers, warnings, antispam, notes, rules, locks, owner, start as start_handler
 from handlers.start import help_command
+from handlers import auto_reply
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -97,6 +98,9 @@ def main():
     # ✦ Single unified callback — handles help, back, warn_ and start_ patterns
     app.add_handler(CallbackQueryHandler(start_handler.start_callback, pattern="^(help|back)$"))
     app.add_handler(CallbackQueryHandler(warnings.warn_callback,       pattern="^warn_"))
+    
+    #------ auto_reply handlers -------------------------+++++++++++++++++++---------------
+    auto_reply.register(app)
 
     # ── Message handlers ─────────────────────────────────────────────────────
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, filter_handlers.check_filters))

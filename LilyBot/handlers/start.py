@@ -1,4 +1,4 @@
-# ✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦
+                # ✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦
 #      🌸 KAWAII START SYSTEM 🌸
 # ✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦
 
@@ -81,13 +81,13 @@ Types: text, media, polls, invite, pin, info
 # ✦━━━━━━━━ CONFIG ━━━━━━━━✦
 
 BOT_NAME      = "『 ʟɪʟʏ вσт 』"
-BOT_USERNAME  = "liiiilyy_bot"          # ✦ NO @ here — used inside URLs
-SUPPORT_GROUP = "upper_moon_chat"       # ✦ NO @ here — used inside URLs
+BOT_USERNAME  = "liiiilyy_bot"
+SUPPORT_GROUP = "upper_moon_chat"
 
-VIDEO_PRIVATE = "https://files.catbox.moe/dlg0rb.mp4"
-VIDEO_GROUP   = "https://files.catbox.moe/931ph0.mp4"
+VIDEO_PRIVATE = "https://files.catbox.moe/931ph0.mp4"
+VIDEO_GROUP   = "https://files.catbox.moe/dlg0rb.mp4"
 
-STICKER_ID = "CAACAgIAAxkBAAFGEk9py21yQ49JGaKmsC2SjjhlJDIwACLXIAAp0y-Eqfu3A5hCItKToE"
+STICKER_ID = "CAACAgUAAxkBAAEBeVpm-jtB-lkO8Oixy5SZHTAy1Ymp4QACEgwAAv75EFbYc5vQ3hQ1Ph4E"
 
 
 # ✦━━━━━━━━ GREETINGS ━━━━━━━━✦
@@ -174,7 +174,7 @@ def group_buttons():
     ])
 
 
-def back_button():
+def help_buttons():
     return InlineKeyboardMarkup([
         [
             InlineKeyboardButton("⬅️ Back", callback_data="back")
@@ -250,42 +250,57 @@ async def start_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     # ── Help button ─────────────────────────────────
+    # Video caption edit nahi ho sakta (too long) 
+    # So: delete old message → send fresh help text
     if query.data == "help":
         try:
-            await query.edit_message_caption(
-                caption=HELP_TEXT,
-                parse_mode=ParseMode.HTML,
-                reply_markup=back_button()
-            )
+            await query.message.delete()
         except Exception as e:
-            logger.warning(f"edit_message_caption failed, trying edit_message_text: {e}")
-            try:
-                await query.edit_message_text(
-                    text=HELP_TEXT,
-                    parse_mode=ParseMode.HTML,
-                    reply_markup=back_button()
-                )
-            except Exception as e2:
-                logger.error(f"Help callback fully failed: {e2}")
+            logger.warning(f"Could not delete message: {e}")
+
+        await ctx.bot.send_message(
+            chat_id=query.message.chat.id,
+            text=HELP_TEXT,
+            parse_mode=ParseMode.HTML,
+            reply_markup=help_buttons()
+        )
 
     # ── Back button ─────────────────────────────────
+    # Delete help text → re-send full start video
     elif query.data == "back":
         try:
-            await query.edit_message_caption(
-                caption=build_private_caption(query.from_user),
+            await query.message.delete()
+        except Exception as e:
+            logger.warning(f"Could not delete message: {e}")
+
+        user    = query.from_user
+        chat_id = query.message.chat.id
+
+        # Sticker
+        try:
+            await ctx.bot.send_sticker(chat_id, STICKER_ID)
+            await asyncio.sleep(0.5)
+        except Exception as e:
+            logger.warning(f"Sticker send failed: {e}")
+
+        # Video + Caption
+        try:
+            await ctx.bot.send_video(
+                chat_id=chat_id,
+                video=VIDEO_PRIVATE,
+                caption=build_private_caption(user),
+                parse_mode=ParseMode.HTML,
+                reply_markup=private_buttons(),
+                supports_streaming=True
+            )
+        except Exception as e:
+            logger.error(f"Back → video send failed: {e}")
+            await ctx.bot.send_message(
+                chat_id=chat_id,
+                text=build_private_caption(user),
                 parse_mode=ParseMode.HTML,
                 reply_markup=private_buttons()
             )
-        except Exception as e:
-            logger.warning(f"edit_message_caption failed on back, trying edit_message_text: {e}")
-            try:
-                await query.edit_message_text(
-                    text=build_private_caption(query.from_user),
-                    parse_mode=ParseMode.HTML,
-                    reply_markup=private_buttons()
-                )
-            except Exception as e2:
-                logger.error(f"Back callback fully failed: {e2}")
 
 
 # ✦━━━━━━━━ HELP COMMAND ━━━━━━━━✦

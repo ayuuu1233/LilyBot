@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 # Paste your Telegram user ID here (get it via @userinfobot)
 # Only this person can use /away and /back commands
-OWNER_ID = 123456789  # ← Change this!
+OWNER_ID = 5158013355  # ← Change this!
 
 # Cooldown in seconds — user won't get a second reply within this time
 COOLDOWN_SECONDS = 20 * 60  # 20 minutes

@@ -87,7 +87,7 @@ SUPPORT_GROUP = "upper_moon_chat"
 VIDEO_PRIVATE = "https://files.catbox.moe/931ph0.mp4"
 VIDEO_GROUP   = "https://files.catbox.moe/dlg0rb.mp4"
 
-STICKER_ID = "CAACAgUAAxkBAAEBeVpm-jtB-lkO8Oixy5SZHTAy1Ymp4QACEgwAAv75EFbYc5vQ3hQ1Ph4E"
+STICKER_ID = "CAACAgUAAxkBAAFGPRZpzjXBHq7-IjDYsyawr6QAAQ5Oey8AAp0LAAK5UtFVp098U-zMvyc6BA"
 
 
 # ✦━━━━━━━━ GREETINGS ━━━━━━━━✦
@@ -97,6 +97,7 @@ GREETINGS = [
     "ɴʏᴀᴀ~ 🌸",
     "ʏᴏʜʜᴏ~ ✨",
     "ᴋᴏɴɴɪᴄʜɪᴡᴀ~ 🫶",
+    "ʜᴏʟᴀ~ 🎀", 
 ]
 
 

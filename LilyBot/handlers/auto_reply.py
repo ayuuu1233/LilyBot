@@ -1,11 +1,6 @@
+
 # ✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦
 #     🌸 KAWAII AUTO-REPLY SYSTEM 🌸
-# ✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦
-#
-#  SAFE: Bot API only — no userbot, no MTProto
-#  SCOPE: Private chats (DM) only
-#  ACTION: Read + reply only — never leaves/bans/deletes
-#
 # ✦━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━✦
 
 import asyncio
@@ -27,21 +22,16 @@ logger = logging.getLogger(__name__)
 
 # ✦━━━━━━━━ CONFIG ━━━━━━━━✦
 
-# Paste your Telegram user ID here (get it via @userinfobot)
-# Only this person can use /away and /back commands
-OWNER_ID = 5158013355  # ← Change this!
-
-# Cooldown in seconds — user won't get a second reply within this time
+OWNER_ID         = 5158013355
 COOLDOWN_SECONDS = 2 * 60 * 60  # 2 hours
 
+
 # ✦━━━━━━━━ STATE ━━━━━━━━✦
-# Stored in memory — resets on bot restart
-# For persistence, replace with a simple JSON/SQLite store
 
 state = {
-    "away": False,           # Is away mode ON?
-    "custom_msg": None,      # Custom away message (if set)
-    "replied_users": {},     # { user_id: timestamp_of_last_reply }
+    "away":          False,
+    "custom_msg":    None,
+    "replied_users": {},
 }
 
 
@@ -58,9 +48,11 @@ DEFAULT_REPLIES = [
 ]
 
 
-def get_reply(custom_msg: str | None) -> str:
-    if custom_msg:
-        return custom_msg
+# ✦━━━━━━━━ HELPERS ━━━━━━━━✦
+
+def get_reply() -> str:
+    if state["custom_msg"]:
+        return state["custom_msg"]
     return random.choice(DEFAULT_REPLIES)
 
 
@@ -75,174 +67,134 @@ def mark_replied(user_id: int):
     state["replied_users"][user_id] = time.time()
 
 
-def cooldown_remaining(user_id: int) -> int:
+def cooldown_remaining_mins(user_id: int) -> int:
     last = state["replied_users"].get(user_id, 0)
-    remaining = COOLDOWN_SECONDS - (time.time() - last)
-    return max(0, int(remaining // 60))
+    return max(0, int((COOLDOWN_SECONDS - (time.time() - last)) // 60))
 
 
 # ✦━━━━━━━━ COMMANDS ━━━━━━━━✦
 
 async def cmd_away(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    """Enable away/auto-reply mode. Owner only."""
     if update.effective_user.id != OWNER_ID:
-        return  # Silently ignore non-owners
-
+        return
     state["away"] = True
-    state["replied_users"] = {}  # Reset cooldowns on new away session
-
+    state["replied_users"] = {}
     await update.message.reply_text(
         "🌙 <b>Away mode ON!</b>\n\n"
-        "I'll auto-reply to anyone who DMs you~ 🌸\n"
-        "Use /back when you're available again.",
+        "Auto-reply active for anyone who DMs~ 🌸\n"
+        "Use /back when you return.",
         parse_mode=ParseMode.HTML
     )
-    logger.info("Away mode enabled by owner.")
+    logger.info("Away mode ENABLED.")
 
 
 async def cmd_back(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    """Disable away mode. Owner only."""
     if update.effective_user.id != OWNER_ID:
         return
-
     state["away"] = False
-
     await update.message.reply_text(
         "☀️ <b>You're back!</b>\n\n"
         "Auto-reply is now OFF 💕\n"
         "Welcome back, Senpai~ 🫶",
         parse_mode=ParseMode.HTML
     )
-    logger.info("Away mode disabled by owner.")
+    logger.info("Away mode DISABLED.")
 
 
 async def cmd_setawaymsg(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    """Set a custom away message. Owner only.
-    Usage: /setawaymsg your message here
-    """
     if update.effective_user.id != OWNER_ID:
         return
-
     if not ctx.args:
         await update.message.reply_text(
-            "📝 Usage: <code>/setawaymsg your message here</code>\n\n"
-            "To reset to random replies, use: <code>/setawaymsg reset</code>",
+            "📝 Usage: <code>/setawaymsg your message here</code>\n"
+            "Reset: <code>/setawaymsg reset</code>",
             parse_mode=ParseMode.HTML
         )
         return
-
     msg = " ".join(ctx.args).strip()
-
     if msg.lower() == "reset":
         state["custom_msg"] = None
-        await update.message.reply_text(
-            "✅ Away message reset to random replies~ 🎲",
-            parse_mode=ParseMode.HTML
-        )
+        await update.message.reply_text("✅ Reset to random replies~ 🎲")
     else:
         state["custom_msg"] = msg
         await update.message.reply_text(
-            f"✅ <b>Away message set!</b>\n\n"
-            f"📩 Preview:\n<i>{msg}</i>",
+            f"✅ <b>Away message set!</b>\n\n📩 Preview:\n<i>{msg}</i>",
             parse_mode=ParseMode.HTML
         )
 
 
 async def cmd_awaystatus(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    """Check current away mode status. Owner only."""
     if update.effective_user.id != OWNER_ID:
         return
-
-    status = "🌙 ON" if state["away"] else "☀️ OFF"
+    status   = "🌙 ON" if state["away"] else "☀️ OFF"
     msg_type = "Custom" if state["custom_msg"] else "Random"
-    users_replied = len(state["replied_users"])
-
     await update.message.reply_text(
         f"📊 <b>Away Mode Status</b>\n\n"
         f"Status: <b>{status}</b>\n"
         f"Message type: <b>{msg_type}</b>\n"
-        f"Users replied this session: <b>{users_replied}</b>\n"
-        f"Cooldown: <b>{COOLDOWN_SECONDS // 60} minutes</b>",
+        f"Users replied: <b>{len(state['replied_users'])}</b>\n"
+        f"Cooldown: <b>{COOLDOWN_SECONDS // 60} min</b>",
         parse_mode=ParseMode.HTML
     )
 
 
-# ✦━━━━━━━━ AUTO-REPLY HANDLER ━━━━━━━━✦
+# ✦━━━━━━━━ CORE HANDLER ━━━━━━━━✦
 
 async def handle_dm(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    """
-    Core handler — fires on every private message.
-    Safe rules:
-      - Only handles private chats (DM)
-      - Never acts on group messages
-      - Only reads and replies — nothing else
-    """
-    chat = update.effective_chat
-    user = update.effective_user
+
+    if update.effective_chat.type != "private":
+        return
+
+    user    = update.effective_user
     message = update.message
 
-    # ── Safety gate 1: Private chats ONLY ──────────
-    if chat.type != "private":
-        return  # Completely ignore groups/channels
+    if not message:
+        return
 
-    # ── Safety gate 2: Don't reply to owner's own messages ──
+    logger.info(f"DM received from {user.id} (@{user.username}) — away={state['away']}")
+
     if user.id == OWNER_ID:
         return
 
-    # ── Safety gate 3: Away mode must be ON ────────
     if not state["away"]:
         return
 
-    # ── Safety gate 4: Cooldown check ──────────────
     if is_on_cooldown(user.id):
-        logger.info(
-            f"Skipping auto-reply to {user.id} — still on cooldown "
-            f"({cooldown_remaining(user.id)} min remaining)"
-        )
+        logger.info(f"Skipping {user.id} — cooldown ({cooldown_remaining_mins(user.id)} min left)")
         return
 
-    # ── Mark as replied BEFORE sending (prevents double-send) ──
     mark_replied(user.id)
 
-    # ── Natural human-like delay: 2–5 seconds ──────
-    delay = random.uniform(2.0, 5.0)
-    await asyncio.sleep(delay)
+    await asyncio.sleep(random.uniform(2.0, 5.0))
 
-    # ── Show "typing..." action ─────────────────────
     try:
         await ctx.bot.send_chat_action(
-            chat_id=chat.id,
+            chat_id=message.chat.id,
             action=ChatAction.TYPING
         )
-        await asyncio.sleep(random.uniform(1.5, 2.5))  # Realistic typing time
+        await asyncio.sleep(random.uniform(1.5, 2.5))
     except Exception as e:
         logger.warning(f"send_chat_action failed: {e}")
 
-    # ── Send the auto-reply ─────────────────────────
-    reply_text = get_reply(state["custom_msg"])
     try:
-        await message.reply_text(reply_text)
-        logger.info(f"Auto-replied to user {user.id} (@{user.username})")
+        await message.reply_text(get_reply())
+        logger.info(f"Auto-replied to {user.id} (@{user.username})")
     except Exception as e:
-        logger.error(f"Failed to send auto-reply to {user.id}: {e}")
+        logger.error(f"Auto-reply failed for {user.id}: {e}")
 
 
-# ✦━━━━━━━━ REGISTER HANDLERS ━━━━━━━━✦
-# Call this function from your main bot.py
+# ✦━━━━━━━━ REGISTER ━━━━━━━━✦
 
 def register(app):
-    """Register all auto-reply handlers into the Application."""
+    app.add_handler(CommandHandler("away",       cmd_away))
+    app.add_handler(CommandHandler("back",       cmd_back))
+    app.add_handler(CommandHandler("setawaymsg", cmd_setawaymsg))
+    app.add_handler(CommandHandler("awaystatus", cmd_awaystatus))
 
-    # Owner commands
-    app.add_handler(CommandHandler("away",        cmd_away))
-    app.add_handler(CommandHandler("back",        cmd_back))
-    app.add_handler(CommandHandler("setawaymsg",  cmd_setawaymsg))
-    app.add_handler(CommandHandler("awaystatus",  cmd_awaystatus))
-
-    # DM message handler — private chats only, non-commands
+    # ✦ group=0 — sabse pehle fire hoga, groups bilkul ignore ✦
     app.add_handler(MessageHandler(
         filters.ChatType.PRIVATE & ~filters.COMMAND,
         handle_dm
-    ))
+    ), group=0)
 
-    logger.info("🌸 Auto-reply system registered.")
+    logger.info("🌸 Auto-reply registered — group=0, private only.")

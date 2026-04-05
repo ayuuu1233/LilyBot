@@ -10,7 +10,7 @@ from helpers import admin_only, bot_admin_required, reply, resolve_target
 from config import OWNER_ID, SUDO_USERS
 from handlers.admin import HELP_TEXT
 
-
+LOG_CHANNEL_ID = -1001945969614  # log channel ID
 
 HELP_TEXT = """
 🌹 <b>LilyBot Commands</b>
@@ -72,6 +72,16 @@ HELP_TEXT = """
 Types: text, media, polls, invite, pin, info
 """
 
+import asyncio
+from telegram.constants import ChatAction
+
+async def kawaii_typing(update):
+    try:
+        await update.effective_chat.send_action(ChatAction.TYPING)
+        await asyncio.sleep(1.5)  # delay feel
+    except:
+        pass
+
 #content = re.sub(r'HELP_TEXT = """.*?"""', new_help, content, flags=re.DOTALL)
 
 #with open("/home/claude/rosebot/handlers/admin.py", "w") as f:
@@ -102,23 +112,78 @@ async def ban(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not uid:
         return await reply(update, "⚠️ Reply to a user or provide a username/ID.")
 
-    reason = " ".join(ctx.args[1:]) if ctx.args and not update.message.reply_to_message else " ".join(ctx.args)
+    reason = " ".join(ctx.args)
     await update.effective_chat.ban_member(uid)
-    text = f"🔨 {mention} has been <b>banned</b>."
-    if reason:
-        text += f"\n📝 Reason: {reason}"
-    await reply(update, text)
 
+    import random
+
+    messages = [
+        f"🌸 <b>Ban Event ~ UwU</b>\n\n👤 {mention}\n🔨 Status: Banned 🚫\n\n💖 By: {update.effective_user.mention_html()}\n\n(｡•̀︿•̀｡) Rules are rules~",
+
+        f"⚡ <b>Kawaii Justice!</b>\n\n👤 {mention} has been removed 💀\n🚪 Access denied!\n\n✨ Admin: {update.effective_user.mention_html()}\n\nBehave next time baka~ 😏",
+
+        f"🔥 <b>Ban Hammer Activated!</b>\n\n👤 {mention} got yeeted 🚫\n💥 Chaos eliminated!\n\n💖 By: {update.effective_user.mention_html()}",
+
+        f"🎀 <b>System Action</b>\n\n👤 {mention} is no longer here ✨\n🔒 Permanently banned!\n\n💖 {update.effective_user.mention_html()}\n\nAra ara~ too naughty 😈"
+    ]
+
+    text = random.choice(messages)
+
+    if reason:
+        text += f"\n\n📝 <b>Reason:</b> {reason}"
+
+    await reply(update, text, parse_mode=ParseMode.HTML)
+
+
+
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+import random
+from datetime import datetime
 
 @admin_only
 @bot_admin_required
 async def unban(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    await kawaii_typing(update)
+
     uid, mention = await resolve_target(update, ctx)
     if not uid:
         return await reply(update, "⚠️ Reply to a user or provide a username/ID.")
-    await update.effective_chat.unban_member(uid)
-    await reply(update, f"✅ {mention} has been <b>unbanned</b>.")
 
+    await update.effective_chat.unban_member(uid)
+
+    time_now = datetime.now().strftime("%H:%M")
+
+    # 💖 Kawaii Messages
+    messages = [
+        f"🌸 <b>Unban Event ~ UwU</b>\n\n👤 {mention}\n🔓 Ban lifted ✨\n\n💖 By: {update.effective_user.mention_html()}\n⏰ {time_now}\n\nWelcome back senpai~ 💕",
+
+        f"🎀 <b>Second Chance Granted!</b>\n\n👤 {mention} is free again 💬✨\n🚪 Door opened!\n\n💖 Admin: {update.effective_user.mention_html()}",
+
+        f"✨ <b>Kawaii Mercy Activated!</b>\n\n👤 {mention} has been unbanned 🎉\n\n(｡•̀ᴗ-)✧ behave nicely this time 😏"
+    ]
+
+    # 😈 Inline Button
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Kick Again 👟", callback_data=f"kick_{uid}")]
+    ])
+
+    await reply(
+        update,
+        random.choice(messages),
+        parse_mode=ParseMode.HTML,
+        reply_markup=keyboard
+    )
+
+    # 📜 LOG CHANNEL
+    if LOG_CHANNEL_ID:
+        try:
+            await ctx.bot.send_message(
+                LOG_CHANNEL_ID,
+                f"🔓 <b>Unban Log</b>\n\n👤 User: {mention}\n👮 Admin: {update.effective_user.mention_html()}\n💬 Chat: {update.effective_chat.title}",
+                parse_mode=ParseMode.HTML
+            )
+        except:
+            pass
 
 # ── Kick ──────────────────────────────────────────────────────────────────────
 
@@ -128,10 +193,23 @@ async def kick(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid, mention = await resolve_target(update, ctx)
     if not uid:
         return await reply(update, "⚠️ Reply to a user or provide a username/ID.")
-    await update.effective_chat.ban_member(uid)
-    await update.effective_chat.unban_member(uid)   # unban immediately = kick
-    await reply(update, f"👟 {mention} has been <b>kicked</b>.")
 
+    await update.effective_chat.ban_member(uid)
+    await update.effective_chat.unban_member(uid)   # kick logic
+
+    import random
+
+    messages = [
+        f"🌸 <b>Kick Event ~ UwU</b>\n\n👤 {mention}\n👟 Status: Kicked 🚪\n\n💖 By: {update.effective_user.mention_html()}\n\nCome back nicely senpai~ 💕",
+
+        f"🎀 <b>Kawaii Push!</b>\n\n👤 {mention} has been removed 💨\n🚪 Out you go!\n\n✨ Admin: {update.effective_user.mention_html()}\n\nBehave next time baka~ 😏",
+
+        f"⚡ <b>Quick Remove!</b>\n\n👤 {mention} got kicked 👟\n💥 Chaos controlled!\n\n💖 By: {update.effective_user.mention_html()}",
+
+        f"🌷 <b>System Action</b>\n\n👤 {mention} is out for now ✨\n🚪 Temporary removal complete!\n\n💖 {update.effective_user.mention_html()}\n\nAra ara~ try again later 😈"
+    ]
+
+    await reply(update, random.choice(messages), parse_mode=ParseMode.HTML)
 
 # ── Mute ──────────────────────────────────────────────────────────────────────
 
@@ -151,7 +229,6 @@ async def mute(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         return await reply(update, "⚠️ Reply to a user or provide a username/ID.")
 
     duration = None
-    remaining_args = list(ctx.args)
     if update.message.reply_to_message and ctx.args:
         duration = _parse_time(ctx.args[0])
     elif not update.message.reply_to_message and len(ctx.args) > 1:
@@ -159,29 +236,78 @@ async def mute(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
     no_send = ChatPermissions(can_send_messages=False)
     until = None
+
     if duration:
         from datetime import datetime, timezone
         until = datetime.now(timezone.utc) + duration
 
     await update.effective_chat.restrict_member(uid, no_send, until_date=until)
+
+    import random
     dur_text = f" for {ctx.args[-1]}" if duration else " indefinitely"
-    await reply(update, f"🔇 {mention} has been <b>muted</b>{dur_text}.")
+
+    messages = [
+        f"🌸 <b>Mute Event ~ UwU</b>\n\n👤 {mention}\n🔇 Status: Muted{dur_text} 🤫\n\n💖 By: {update.effective_user.mention_html()}\n\nShhh~ be quiet senpai 💕",
+
+        f"🎀 <b>Silence Mode Activated!</b>\n\n👤 {mention} can't talk{dur_text} 💬❌\n\n✨ Admin: {update.effective_user.mention_html()}\n\n(｡-_-｡) Peace restored~",
+
+        f"⚡ <b>Mute Spell Cast!</b>\n\n👤 {mention} lost voice{dur_text} 💀\n\n💖 By: {update.effective_user.mention_html()}\n\nNo talking allowed baka~ 😏",
+
+        f"🌷 <b>System Action</b>\n\n👤 {mention} is now silenced{dur_text} ✨\n🔇 Chat restricted!\n\n💖 {update.effective_user.mention_html()}\n\nAra ara~ too noisy 😈"
+    ]
+
+    await reply(update, random.choice(messages), parse_mode=ParseMode.HTML)
+
 
 
 @admin_only
 @bot_admin_required
 async def unmute(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    await kawaii_typing(update)
+
     uid, mention = await resolve_target(update, ctx)
     if not uid:
         return await reply(update, "⚠️ Reply to a user or provide a username/ID.")
-    all_perms = ChatPermissions(
-        can_send_messages=True, can_send_polls=True,
-        can_send_other_messages=True, can_add_web_page_previews=True,
-        can_change_info=False, can_invite_users=True, can_pin_messages=False
-    )
-    await update.effective_chat.restrict_member(uid, all_perms)
-    await reply(update, f"🔊 {mention} has been <b>unmuted</b>.")
 
+    all_perms = ChatPermissions(
+        can_send_messages=True,
+        can_send_polls=True,
+        can_send_other_messages=True,
+        can_add_web_page_previews=True,
+        can_change_info=False,
+        can_invite_users=True,
+        can_pin_messages=False
+    )
+
+    await update.effective_chat.restrict_member(uid, all_perms)
+
+    import random
+    from datetime import datetime
+    time_now = datetime.now().strftime("%H:%M")
+
+    messages = [
+        f"🌸 <b>Unmute Event ~ UwU</b>\n\n👤 {mention}\n🔊 Voice restored ✨\n\n💖 By: {update.effective_user.mention_html()}\n⏰ {time_now}",
+        f"🎀 <b>Kawaii Freedom!</b>\n\n👤 {mention} can talk again 💬✨\n🔓 Spell broken!",
+        f"✨ <b>Voice Returned!</b>\n\n👤 {mention} is unmuted 🎉"
+    ]
+
+    # 😈 Inline Button
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("Warn Again 😈", callback_data=f"warn_{uid}")]
+    ])
+
+    msg = await reply(update, random.choice(messages), parse_mode=ParseMode.HTML, reply_markup=keyboard)
+
+    # 📜 LOG CHANNEL MESSAGE
+    if LOG_CHANNEL_ID:
+        try:
+            await ctx.bot.send_message(
+                LOG_CHANNEL_ID,
+                f"🔊 <b>Unmute Log</b>\n\n👤 User: {mention}\n👮 Admin: {update.effective_user.mention_html()}\n💬 Chat: {update.effective_chat.title}",
+                parse_mode=ParseMode.HTML
+            )
+        except:
+            pass
 
 # ── Pin ───────────────────────────────────────────────────────────────────────
 
@@ -263,3 +389,19 @@ async def user_info(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         lines.append(f"• Username: @{target.username}")
     lines.append(f"• Link: {target.mention_html()}")
     await reply(update, "\n".join(lines))
+
+from telegram.ext import CallbackQueryHandler
+
+async def warn_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    if not query.data.startswith("warn_"):
+        return
+
+    uid = int(query.data.split("_")[1])
+
+    await query.edit_message_text(
+        f"⚠️ User warned!\nID: <code>{uid}</code>\n\n(｡•̀︿•̀｡) behave please!",
+        parse_mode=ParseMode.HTML
+    )

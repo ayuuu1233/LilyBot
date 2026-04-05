@@ -128,7 +128,7 @@ def main():
     # ── Callbacks ───────────────────────────────────
     app.add_handler(CallbackQueryHandler(start_handler.start_callback, pattern="^(help|back)$"))
     app.add_handler(CallbackQueryHandler(warnings.warn_callback,       pattern="^warn_"))
-    application.add_handler(CallbackQueryHandler(warn_button, pattern="^warn_"))
+    
     
     # ✦ AUTO-REPLY — group=0, fires BEFORE message handlers ✦
     auto_reply.register(app)

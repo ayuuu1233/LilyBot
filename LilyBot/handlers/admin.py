@@ -512,20 +512,3 @@ async def user_info(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     text.append(random.choice(extras))
 
     await reply(update, "\n".join(text), parse_mode=ParseMode.HTML)
-
-#----------- warn --------------------------------------------------------
-from telegram.ext import CallbackQueryHandler
-
-async def warn_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    if not query.data.startswith("warn_"):
-        return
-
-    uid = int(query.data.split("_")[1])
-
-    await query.edit_message_text(
-        f"⚠️ User warned!\nID: <code>{uid}</code>\n\n(｡•̀︿•̀｡) behave please!",
-        parse_mode=ParseMode.HTML
-  )

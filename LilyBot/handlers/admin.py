@@ -316,16 +316,43 @@ async def unmute(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 async def pin(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not update.message.reply_to_message:
         return await reply(update, "⚠️ Reply to the message you want to pin.")
+
     loud = "silent" not in (ctx.args or [])
     await update.message.reply_to_message.pin(disable_notification=not loud)
-    await reply(update, "📌 Message pinned.")
+
+    import random
+
+    messages = [
+        f"🌸 <b>Pin Event ~ UwU</b>\n\n📌 Message pinned successfully ✨\n\n💖 By: {update.effective_user.mention_html()}\n\nKeep it safe senpai~ 💕",
+
+        f"🎀 <b>Kawaii Pin!</b>\n\n📌 This message is now important 💬✨\n\n✨ Admin: {update.effective_user.mention_html()}\n\nDon't ignore it baka~ 😏",
+
+        f"⚡ <b>Highlight Activated!</b>\n\n📌 Message pinned at the top 🔝\n\n💖 By: {update.effective_user.mention_html()}\n\nNotice it properly 👀",
+
+        f"🌷 <b>System Action</b>\n\n📌 Message secured ✨\n🔝 Now visible for everyone!\n\n💖 {update.effective_user.mention_html()}\n\nAra ara~ important info 😈"
+    ]
+
+    await reply(update, random.choice(messages), parse_mode=ParseMode.HTML)
 
 
 @admin_only
 @bot_admin_required
 async def unpin(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await ctx.bot.unpin_chat_message(update.effective_chat.id)
-    await reply(update, "📌 Message unpinned.")
+
+    import random
+
+    messages = [
+        f"🌸 <b>Unpin Event ~ UwU</b>\n\n📌 Message unpinned ✨\n\n💖 By: {update.effective_user.mention_html()}\n\nAll clear now senpai~ 💕",
+
+        f"🎀 <b>Kawaii Update!</b>\n\n📌 Message removed from top 💬\n\n✨ Admin: {update.effective_user.mention_html()}\n\nNo longer important baka~ 😏",
+
+        f"⚡ <b>Pin Released!</b>\n\n📌 Message is no longer pinned 🔓\n\n💖 By: {update.effective_user.mention_html()}",
+
+        f"🌷 <b>System Action</b>\n\n📌 Highlight removed ✨\n🔽 Back to normal chat\n\n💖 {update.effective_user.mention_html()}\n\nAra ara~ done 😈"
+    ]
+
+    await reply(update, random.choice(messages), parse_mode=ParseMode.HTML)
 
 
 # ── Promote / Demote ──────────────────────────────────────────────────────────
@@ -336,12 +363,28 @@ async def promote(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid, mention = await resolve_target(update, ctx)
     if not uid:
         return await reply(update, "⚠️ Reply to a user or provide a username/ID.")
+
     await update.effective_chat.promote_member(
         uid,
-        can_delete_messages=True, can_restrict_members=True,
-        can_pin_messages=True, can_invite_users=True
+        can_delete_messages=True,
+        can_restrict_members=True,
+        can_pin_messages=True,
+        can_invite_users=True
     )
-    await reply(update, f"⭐ {mention} has been <b>promoted</b> to admin.")
+
+    import random
+
+    messages = [
+        f"👑 <b>Promotion Event ~ UwU</b>\n\n👤 {mention}\n⭐ Status: Promoted to Admin ✨\n\n💖 By: {update.effective_user.mention_html()}\n\nWelcome to the elite ranks senpai~ 💕",
+
+        f"🌸 <b>Kawaii Power Up!</b>\n\n👤 {mention} is now an admin ⚡\n🔐 Authority granted!\n\n✨ By: {update.effective_user.mention_html()}\n\nUse your powers wisely baka~ 😏",
+
+        f"⚡ <b>Rank Upgrade!</b>\n\n👤 {mention} leveled up 👑\n💥 New powers unlocked!\n\n💖 Admin: {update.effective_user.mention_html()}",
+
+        f"🎀 <b>System Promotion</b>\n\n👤 {mention} has ascended ✨\n👑 Admin role granted!\n\n💖 {update.effective_user.mention_html()}\n\nAra ara~ big responsibility 😈"
+    ]
+
+    await reply(update, random.choice(messages), parse_mode=ParseMode.HTML)
 
 
 @admin_only
@@ -350,20 +393,58 @@ async def demote(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     uid, mention = await resolve_target(update, ctx)
     if not uid:
         return await reply(update, "⚠️ Reply to a user or provide a username/ID.")
-    await update.effective_chat.promote_member(uid)   # empty = strip all rights
-    await reply(update, f"🔽 {mention} has been <b>demoted</b>.")
 
+    await update.effective_chat.promote_member(uid)  # remove all rights
+
+    import random
+
+    messages = [
+        f"🔽 <b>Demotion Event ~ UwU</b>\n\n👤 {mention}\n💔 Status: Demoted\n\n💖 By: {update.effective_user.mention_html()}\n\nPower removed senpai~ 😔",
+
+        f"🌸 <b>Kawaii Downgrade!</b>\n\n👤 {mention} lost admin powers ⚡\n🔓 Authority revoked!\n\n✨ By: {update.effective_user.mention_html()}\n\nBetter luck next time baka~ 😏",
+
+        f"⚡ <b>Rank Lost!</b>\n\n👤 {mention} has been demoted 💀\n📉 Powers removed!\n\n💖 Admin: {update.effective_user.mention_html()}",
+
+        f"🎀 <b>System Update</b>\n\n👤 {mention} is no longer an admin ✨\n🔽 Back to normal user\n\n💖 {update.effective_user.mention_html()}\n\nAra ara~ responsibility was too much 😈"
+    ]
+
+    await reply(update, random.choice(messages), parse_mode=ParseMode.HTML)
 
 # ── Admin list ────────────────────────────────────────────────────────────────
 
 async def adminlist(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     admins = await update.effective_chat.get_administrators()
-    lines = []
+
+    owner = None
+    admins_list = []
+
     for a in admins:
-        name = a.user.full_name
-        tag  = " 👑" if a.status == "creator" else ""
-        lines.append(f"• {name}{tag}")
-    await reply(update, "<b>Admins in this group:</b>\n" + "\n".join(lines))
+        user = a.user
+        mention = user.mention_html()
+        name = user.full_name
+
+        if a.status == "creator":
+            owner = f"👑 <b>Owner :</b> {mention}"
+        else:
+            # 💖 Role detection
+            if a.can_promote_members:
+                role = "𝐂𝐎-𝐎𝐖𝐍𝐄𝐑 ⚡"
+            elif a.can_restrict_members:
+                role = "𝐀𝐃𝐌𝐈𝐍 🔰"
+            elif a.can_delete_messages:
+                role = "𝐌𝐎𝐃 🛡️"
+            else:
+                role = "𝐄𝐋𝐈𝐓𝐄 💎"
+
+            admins_list.append(f"• 『 {name} 』 - {role}")
+
+    text = (
+        "👮 <b>Admin List</b>:\n\n"
+        f"{owner if owner else ''}\n\n"
+        + "\n".join(admins_list)
+    )
+
+    await reply(update, text, parse_mode=ParseMode.HTML)
 
 
 # ── ID / Info ─────────────────────────────────────────────────────────────────
@@ -371,25 +452,68 @@ async def adminlist(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 async def get_id(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     msg = update.message
     chat_id = update.effective_chat.id
-    if msg.reply_to_message:
-        uid = msg.reply_to_message.from_user.id
-        await reply(update, f"👤 User ID: <code>{uid}</code>\n💬 Chat ID: <code>{chat_id}</code>")
-    else:
-        await reply(update, f"👤 Your ID: <code>{msg.from_user.id}</code>\n💬 Chat ID: <code>{chat_id}</code>")
 
+    if msg.reply_to_message:
+        user = msg.reply_to_message.from_user
+        text = (
+            f"🌸 <b>ID Lookup ~ UwU</b>\n\n"
+            f"👤 <b>User:</b> {user.mention_html()}\n"
+            f"🆔 <b>User ID:</b> <code>{user.id}</code>\n"
+            f"💬 <b>Chat ID:</b> <code>{chat_id}</code>\n\n"
+            f"(｡•̀ᴗ-)✧ Found successfully!"
+        )
+    else:
+        user = msg.from_user
+        text = (
+            f"🌸 <b>Your Info ~ UwU</b>\n\n"
+            f"👤 <b>You:</b> {user.mention_html()}\n"
+            f"🆔 <b>Your ID:</b> <code>{user.id}</code>\n"
+            f"💬 <b>Chat ID:</b> <code>{chat_id}</code>\n\n"
+            f"💖 Keep it safe senpai~"
+        )
+
+    await reply(update, text, parse_mode=ParseMode.HTML)
 
 async def user_info(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     target = update.message.reply_to_message.from_user if update.message.reply_to_message else update.effective_user
-    lines = [
-        f"<b>User Info</b>",
-        f"• ID: <code>{target.id}</code>",
-        f"• Name: {target.full_name}",
-    ]
-    if target.username:
-        lines.append(f"• Username: @{target.username}")
-    lines.append(f"• Link: {target.mention_html()}")
-    await reply(update, "\n".join(lines))
 
+    import random
+
+    headers = [
+        "🌸 <b>User Profile ~ UwU</b>",
+        "🎀 <b>Kawaii Info Card</b>",
+        "✨ <b>User Data Loaded!</b>",
+        "🌷 <b>Profile Scan Complete</b>"
+    ]
+
+    text = [
+        random.choice(headers),
+        "",
+        f"👤 <b>Name:</b> {target.full_name}",
+        f"🆔 <b>ID:</b> <code>{target.id}</code>"
+    ]
+
+    if target.username:
+        text.append(f"📛 <b>Username:</b> @{target.username}")
+    else:
+        text.append(f"📛 <b>Username:</b> <i>None</i>")
+
+    text.append(f"🔗 <b>Profile Link:</b> {target.mention_html()}")
+
+    # 💖 Extra flavor line
+    extras = [
+        "(≧◡≦) ♡ Looking cool senpai~",
+        "UwU such a mysterious user~ 😏",
+        "✨ Data looks clean and powerful!",
+        "Ara ara~ interesting profile 👀"
+    ]
+
+    text.append("")
+    text.append(random.choice(extras))
+
+    await reply(update, "\n".join(text), parse_mode=ParseMode.HTML)
+
+#----------- warn --------------------------------------------------------
 from telegram.ext import CallbackQueryHandler
 
 async def warn_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE):

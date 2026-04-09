@@ -1,3 +1,6 @@
+from telegram import Update
+from telegram.ext import ContextTypes
+from helpers import reply
 import requests
 import os
 import asyncio

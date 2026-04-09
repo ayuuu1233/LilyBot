@@ -41,9 +41,8 @@ def bot_admin_required(func):
 
 # ── Reply helpers ────────────────────────────────────────────────────────────
 
-async def reply(update: Update, text: str, **kwargs):
-    await update.message.reply_text(text, parse_mode="HTML", **kwargs)
-
+async def reply(update, text, **kwargs):
+    return await update.message.reply_text(text, parse_mode="HTML", **kwargs)
 
 # ── Target resolution ─────────────────────────────────────────────────────────
 

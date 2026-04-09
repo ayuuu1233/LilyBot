@@ -20,6 +20,7 @@ from handlers import (
     auto_reply,
 )
 from handlers.start import help_command
+from handlers.catbox import catbox
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",

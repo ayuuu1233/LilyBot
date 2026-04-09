@@ -118,7 +118,10 @@ def main():
     app.add_handler(CommandHandler("shutdown",   owner.shutdown))
     app.add_handler(CommandHandler("restart",    owner.restart))
     app.add_handler(CommandHandler("iam",        owner.iam))
-
+    
+    # ── catbox ───────────────────────────────────────
+    app.add_handler(CommandHandler("catbox",     catbox)) 
+    
     # ── General ─────────────────────────────────────
     app.add_handler(CommandHandler("start",      start_handler.start))
     app.add_handler(CommandHandler("help",       help_command))
